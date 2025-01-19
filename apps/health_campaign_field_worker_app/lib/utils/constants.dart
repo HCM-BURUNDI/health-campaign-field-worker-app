@@ -91,6 +91,8 @@ class Constants {
   static const String communityKey = 'communityKey';
   static const String householdTypeKey = 'householdTypeKey';
 
+  static const String boundaryLocalizationPath = 'rainmaker-boundary-admin';
+
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,
     Isar isar,

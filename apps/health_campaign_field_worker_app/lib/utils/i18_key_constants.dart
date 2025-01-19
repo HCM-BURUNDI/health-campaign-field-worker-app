@@ -190,6 +190,9 @@ class Common {
 
   String get scanBales => 'CORE_COMMON_SCAN_BALES';
   String get ageInMonths => 'AGE_IN_MONTHS_LABEL';
+
+  String get coreCommonRetry => 'CORE_COMMON_RETRY';
+  String get failedToFetch => 'CORE_COMMON_FAILED_TO_FETCH';
 }
 
 class HomeShowcase {
