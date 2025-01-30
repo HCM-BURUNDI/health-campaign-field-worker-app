@@ -1,7 +1,7 @@
 name: health_campaign_field_worker_app
 description: A new Flutter project.
 publish_to: "none"
-version: 1.6.1+2
+version: 1.6.6+6
 
 environment:
   sdk: ">=3.0.0 <=4.0.0"
@@ -58,7 +58,7 @@ dependencies:
   qr_flutter: ^4.1.0
   disk_space_update: ^0.0.2
   sync_service: ^0.0.1-dev.1
-  attendance_management: ^1.0.3
+  attendance_management: ^1.0.3+1
   digit_scanner: ^1.0.4
   inventory_management: ^1.0.4
   referral_reconciliation: ^1.0.3
@@ -107,7 +107,7 @@ dev_dependencies:
   hrk_flutter_test_batteries: ^0.8.0
 
 flutter_icons:
-  android: "ic_launcher"
+  android: "burundi_logo_tsinda_malaria"
   ios: true
   image_path: "assets/icons/app_icon.png"
   min_sdk_android: 21
@@ -115,8 +115,9 @@ flutter_icons:
 flutter:
   assets:
     - ./
+    - assets/audio/
     - assets/icons/svg/
-    # - assets/animated_json/
+    - assets/animated_json/
 
   fonts:
     - family: Roboto

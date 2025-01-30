@@ -89,6 +89,17 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CustomComplaintTypeRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomComplaintTypeRouteArgs>(
+          orElse: () => const CustomComplaintTypeRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomComplaintTypePage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     CustomComplaintsDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<CustomComplaintsDetailsRouteArgs>(
           orElse: () => const CustomComplaintsDetailsRouteArgs());
@@ -109,6 +120,22 @@ abstract class _$AppRouter extends RootStackRouter {
           key: args.key,
           appLocalizations: args.appLocalizations,
           isEditing: args.isEditing,
+        ),
+      );
+    },
+    CustomDigitScannerRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomDigitScannerRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomDigitScannerPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          quantity: args.quantity,
+          isGS1code: args.isGS1code,
+          singleValue: args.singleValue,
+          isEditEnabled: args.isEditEnabled,
+          manualEnabled: args.manualEnabled,
+          scanType: args.scanType,
         ),
       );
     },
@@ -149,6 +176,18 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CustomHouseholdAcknowledgementRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomHouseholdAcknowledgementRouteArgs>(
+          orElse: () => const CustomHouseholdAcknowledgementRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomHouseholdAcknowledgementPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          enableViewHousehold: args.enableViewHousehold,
+        ),
+      );
+    },
     CustomHouseholdLocationRoute.name: (routeData) {
       final args = routeData.argsAs<CustomHouseholdLocationRouteArgs>(
           orElse: () => const CustomHouseholdLocationRouteArgs());
@@ -183,6 +222,40 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CustomInventoryFacilitySelectionRoute.name: (routeData) {
+      final args =
+          routeData.argsAs<CustomInventoryFacilitySelectionRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomInventoryFacilitySelectionPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          facilities: args.facilities,
+        ),
+      );
+    },
+    CustomInventoryReportDetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomInventoryReportDetailsRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomInventoryReportDetailsPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+          reportType: args.reportType,
+        ),
+      );
+    },
+    CustomInventoryReportSelectionRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomInventoryReportSelectionRouteArgs>(
+          orElse: () => const CustomInventoryReportSelectionRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomInventoryReportSelectionPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
     CustomSearchBeneficiaryRoute.name: (routeData) {
       final args = routeData.argsAs<CustomSearchBeneficiaryRouteArgs>(
           orElse: () => const CustomSearchBeneficiaryRouteArgs());
@@ -200,6 +273,17 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: CustomStockDetailsPage(
+          key: args.key,
+          appLocalizations: args.appLocalizations,
+        ),
+      );
+    },
+    CustomStockReconciliationRoute.name: (routeData) {
+      final args = routeData.argsAs<CustomStockReconciliationRouteArgs>(
+          orElse: () => const CustomStockReconciliationRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CustomStockReconciliationPage(
           key: args.key,
           appLocalizations: args.appLocalizations,
         ),
@@ -587,6 +671,45 @@ class CustomClosedHouseholdSummaryRouteArgs {
 }
 
 /// generated route for
+/// [CustomComplaintTypePage]
+class CustomComplaintTypeRoute
+    extends PageRouteInfo<CustomComplaintTypeRouteArgs> {
+  CustomComplaintTypeRoute({
+    Key? key,
+    ComplaintsLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomComplaintTypeRoute.name,
+          args: CustomComplaintTypeRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomComplaintTypeRoute';
+
+  static const PageInfo<CustomComplaintTypeRouteArgs> page =
+      PageInfo<CustomComplaintTypeRouteArgs>(name);
+}
+
+class CustomComplaintTypeRouteArgs {
+  const CustomComplaintTypeRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final ComplaintsLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomComplaintTypeRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
 /// [CustomComplaintsDetailsPage]
 class CustomComplaintsDetailsRoute
     extends PageRouteInfo<CustomComplaintsDetailsRouteArgs> {
@@ -666,6 +789,75 @@ class CustomDeliverInterventionRouteArgs {
   @override
   String toString() {
     return 'CustomDeliverInterventionRouteArgs{key: $key, appLocalizations: $appLocalizations, isEditing: $isEditing}';
+  }
+}
+
+/// generated route for
+/// [CustomDigitScannerPage]
+class CustomDigitScannerRoute
+    extends PageRouteInfo<CustomDigitScannerRouteArgs> {
+  CustomDigitScannerRoute({
+    Key? key,
+    ScannerLocalization? appLocalizations,
+    required int quantity,
+    required bool isGS1code,
+    bool singleValue = false,
+    bool isEditEnabled = false,
+    bool manualEnabled = true,
+    ScanType scanType = ScanType.others,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomDigitScannerRoute.name,
+          args: CustomDigitScannerRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            quantity: quantity,
+            isGS1code: isGS1code,
+            singleValue: singleValue,
+            isEditEnabled: isEditEnabled,
+            manualEnabled: manualEnabled,
+            scanType: scanType,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomDigitScannerRoute';
+
+  static const PageInfo<CustomDigitScannerRouteArgs> page =
+      PageInfo<CustomDigitScannerRouteArgs>(name);
+}
+
+class CustomDigitScannerRouteArgs {
+  const CustomDigitScannerRouteArgs({
+    this.key,
+    this.appLocalizations,
+    required this.quantity,
+    required this.isGS1code,
+    this.singleValue = false,
+    this.isEditEnabled = false,
+    this.manualEnabled = true,
+    this.scanType = ScanType.others,
+  });
+
+  final Key? key;
+
+  final ScannerLocalization? appLocalizations;
+
+  final int quantity;
+
+  final bool isGS1code;
+
+  final bool singleValue;
+
+  final bool isEditEnabled;
+
+  final bool manualEnabled;
+
+  final ScanType scanType;
+
+  @override
+  String toString() {
+    return 'CustomDigitScannerRouteArgs{key: $key, appLocalizations: $appLocalizations, quantity: $quantity, isGS1code: $isGS1code, singleValue: $singleValue, isEditEnabled: $isEditEnabled, manualEnabled: $manualEnabled, scanType: $scanType}';
   }
 }
 
@@ -783,6 +975,50 @@ class CustomHouseHoldDetailsRouteArgs {
   @override
   String toString() {
     return 'CustomHouseHoldDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [CustomHouseholdAcknowledgementPage]
+class CustomHouseholdAcknowledgementRoute
+    extends PageRouteInfo<CustomHouseholdAcknowledgementRouteArgs> {
+  CustomHouseholdAcknowledgementRoute({
+    Key? key,
+    RegistrationDeliveryLocalization? appLocalizations,
+    bool? enableViewHousehold,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomHouseholdAcknowledgementRoute.name,
+          args: CustomHouseholdAcknowledgementRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            enableViewHousehold: enableViewHousehold,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomHouseholdAcknowledgementRoute';
+
+  static const PageInfo<CustomHouseholdAcknowledgementRouteArgs> page =
+      PageInfo<CustomHouseholdAcknowledgementRouteArgs>(name);
+}
+
+class CustomHouseholdAcknowledgementRouteArgs {
+  const CustomHouseholdAcknowledgementRouteArgs({
+    this.key,
+    this.appLocalizations,
+    this.enableViewHousehold,
+  });
+
+  final Key? key;
+
+  final RegistrationDeliveryLocalization? appLocalizations;
+
+  final bool? enableViewHousehold;
+
+  @override
+  String toString() {
+    return 'CustomHouseholdAcknowledgementRouteArgs{key: $key, appLocalizations: $appLocalizations, enableViewHousehold: $enableViewHousehold}';
   }
 }
 
@@ -909,6 +1145,133 @@ class CustomIndividualDetailsRouteArgs {
 }
 
 /// generated route for
+/// [CustomInventoryFacilitySelectionPage]
+class CustomInventoryFacilitySelectionRoute
+    extends PageRouteInfo<CustomInventoryFacilitySelectionRouteArgs> {
+  CustomInventoryFacilitySelectionRoute({
+    Key? key,
+    InventoryLocalization? appLocalizations,
+    required List<FacilityModel> facilities,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomInventoryFacilitySelectionRoute.name,
+          args: CustomInventoryFacilitySelectionRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            facilities: facilities,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomInventoryFacilitySelectionRoute';
+
+  static const PageInfo<CustomInventoryFacilitySelectionRouteArgs> page =
+      PageInfo<CustomInventoryFacilitySelectionRouteArgs>(name);
+}
+
+class CustomInventoryFacilitySelectionRouteArgs {
+  const CustomInventoryFacilitySelectionRouteArgs({
+    this.key,
+    this.appLocalizations,
+    required this.facilities,
+  });
+
+  final Key? key;
+
+  final InventoryLocalization? appLocalizations;
+
+  final List<FacilityModel> facilities;
+
+  @override
+  String toString() {
+    return 'CustomInventoryFacilitySelectionRouteArgs{key: $key, appLocalizations: $appLocalizations, facilities: $facilities}';
+  }
+}
+
+/// generated route for
+/// [CustomInventoryReportDetailsPage]
+class CustomInventoryReportDetailsRoute
+    extends PageRouteInfo<CustomInventoryReportDetailsRouteArgs> {
+  CustomInventoryReportDetailsRoute({
+    Key? key,
+    InventoryLocalization? appLocalizations,
+    required InventoryReportType reportType,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomInventoryReportDetailsRoute.name,
+          args: CustomInventoryReportDetailsRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+            reportType: reportType,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomInventoryReportDetailsRoute';
+
+  static const PageInfo<CustomInventoryReportDetailsRouteArgs> page =
+      PageInfo<CustomInventoryReportDetailsRouteArgs>(name);
+}
+
+class CustomInventoryReportDetailsRouteArgs {
+  const CustomInventoryReportDetailsRouteArgs({
+    this.key,
+    this.appLocalizations,
+    required this.reportType,
+  });
+
+  final Key? key;
+
+  final InventoryLocalization? appLocalizations;
+
+  final InventoryReportType reportType;
+
+  @override
+  String toString() {
+    return 'CustomInventoryReportDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations, reportType: $reportType}';
+  }
+}
+
+/// generated route for
+/// [CustomInventoryReportSelectionPage]
+class CustomInventoryReportSelectionRoute
+    extends PageRouteInfo<CustomInventoryReportSelectionRouteArgs> {
+  CustomInventoryReportSelectionRoute({
+    Key? key,
+    InventoryLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomInventoryReportSelectionRoute.name,
+          args: CustomInventoryReportSelectionRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomInventoryReportSelectionRoute';
+
+  static const PageInfo<CustomInventoryReportSelectionRouteArgs> page =
+      PageInfo<CustomInventoryReportSelectionRouteArgs>(name);
+}
+
+class CustomInventoryReportSelectionRouteArgs {
+  const CustomInventoryReportSelectionRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final InventoryLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomInventoryReportSelectionRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
 /// [CustomSearchBeneficiaryPage]
 class CustomSearchBeneficiaryRoute
     extends PageRouteInfo<CustomSearchBeneficiaryRouteArgs> {
@@ -983,6 +1346,45 @@ class CustomStockDetailsRouteArgs {
   @override
   String toString() {
     return 'CustomStockDetailsRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [CustomStockReconciliationPage]
+class CustomStockReconciliationRoute
+    extends PageRouteInfo<CustomStockReconciliationRouteArgs> {
+  CustomStockReconciliationRoute({
+    Key? key,
+    InventoryLocalization? appLocalizations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CustomStockReconciliationRoute.name,
+          args: CustomStockReconciliationRouteArgs(
+            key: key,
+            appLocalizations: appLocalizations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CustomStockReconciliationRoute';
+
+  static const PageInfo<CustomStockReconciliationRouteArgs> page =
+      PageInfo<CustomStockReconciliationRouteArgs>(name);
+}
+
+class CustomStockReconciliationRouteArgs {
+  const CustomStockReconciliationRouteArgs({
+    this.key,
+    this.appLocalizations,
+  });
+
+  final Key? key;
+
+  final InventoryLocalization? appLocalizations;
+
+  @override
+  String toString() {
+    return 'CustomStockReconciliationRouteArgs{key: $key, appLocalizations: $appLocalizations}';
   }
 }
 

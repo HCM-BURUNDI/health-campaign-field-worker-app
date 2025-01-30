@@ -14,9 +14,13 @@ import 'package:gs1_barcode_parser/gs1_barcode_parser.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:digit_scanner/utils/i18_key_constants.dart' as i18;
+import '../utils/constants.dart';
+import '../utils/environment_config.dart';
 import '../utils/i18_key_constants.dart' as i18Local;
 import 'package:digit_scanner/blocs/scanner.dart';
 import 'package:digit_scanner/widgets/vision_detector_views/detector_view.dart';
+
+enum ScanType { stock, others }
 
 @RoutePage()
 class CustomDigitScannerPage extends LocalizedStatefulWidget {
@@ -25,6 +29,7 @@ class CustomDigitScannerPage extends LocalizedStatefulWidget {
   final bool isGS1code;
   final bool isEditEnabled;
   final bool manualEnabled;
+  final ScanType scanType;
 
   const CustomDigitScannerPage({
     super.key,
@@ -34,6 +39,7 @@ class CustomDigitScannerPage extends LocalizedStatefulWidget {
     this.singleValue = false,
     this.isEditEnabled = false,
     this.manualEnabled = true,
+    this.scanType = ScanType.others,
   });
 
   @override
@@ -58,12 +64,32 @@ class _CustomDigitScannerPageState
   bool flashStatus = false;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   static const _manualCodeFormKey = 'manualCode';
+  String districSecificDigitsBasedOnEnv = '';
+  bool isTraining = true;
+  String districtRange = '48';
+  String phase = '00';
 
-  RegExp pattern = RegExp(r'^2025-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}$');
-
+  RegExp pattern = RegExp(r'^2025-00-48-\d{2}-\d{2}-\d{2}$');
+  RegExp balePattern = RegExp(r'^\d{18}$');
+  late BuildContext currentContext;
   @override
   void initState() {
+    currentContext = context;
     initializeCameras();
+    if (envConfig.variables.envType == EnvType.prod) {
+      isTraining = false;
+
+      // Phase is usually static, but it could also depend on the environment
+      phase = isTraining ? '00' : '01|02';
+
+      // For training, district code is 48, else it is [01-47]
+      districtRange = isTraining ? '48' : '[01-47]';
+
+      // Construct the regex dynamically
+      pattern = RegExp(
+          r'^2025-' + phase + '-' + districtRange + r'-\d{2}-\d{2}-\d{2}$');
+    }
+
     if (!widget.isEditEnabled) {
       context
           .read<DigitScannerBloc>()
@@ -160,7 +186,7 @@ class _CustomDigitScannerPageState
                             ),
                           ),
                         ),
-                        if (widget.isGS1code)
+                        if (!widget.manualEnabled)
                           const SizedBox.shrink()
                         else
                           Align(
@@ -465,19 +491,52 @@ class _CustomDigitScannerPageState
                                       String code = form
                                           .control(_manualCodeFormKey)
                                           .value;
-                                      if (pattern.hasMatch(code)) {
-                                        codes.add(form
-                                            .control(_manualCodeFormKey)
-                                            .value);
+                                      if (widget.isGS1code &&
+                                          balePattern.hasMatch(code)) {
+                                        final String barcode = '00$code';
+                                        final parser =
+                                            GS1BarcodeParser.defaultParser();
+                                        GS1Barcode dataResult =
+                                            parser.parse(barcode);
+
+                                        if (result.length >= widget.quantity) {
+                                          await DigitToast.show(
+                                            context,
+                                            options: DigitToastOptions(
+                                              localizations.translate(i18Local
+                                                  .deliverIntervention
+                                                  .bednetScanMoreThanCount),
+                                              true,
+                                              Theme.of(context),
+                                            ),
+                                          );
+                                        } else {
+                                          result.add(dataResult);
+                                        }
+                                        bloc.add(
+                                          DigitScannerEvent.handleScanner(
+                                            barCode: result,
+                                            qrCode: state.qrCodes,
+                                          ),
+                                        );
+                                      } else if (!widget.isGS1code &&
+                                          pattern.hasMatch(code)) {
                                         // Info when quantity is provided and user enters more resource then replace the (only when quantity 1 rest cases this does not follow)
-                                        if ((widget.quantity == 1) &&
-                                            codes.length > widget.quantity &&
-                                            codes.isNotEmpty) {
-                                          codes = [
-                                            form
-                                                .control(_manualCodeFormKey)
-                                                .value
-                                          ];
+                                        if (codes.length >= widget.quantity) {
+                                          await DigitToast.show(
+                                            context,
+                                            options: DigitToastOptions(
+                                              localizations.translate(i18Local
+                                                  .deliverIntervention
+                                                  .bednetScanMoreThanCount),
+                                              true,
+                                              Theme.of(context),
+                                            ),
+                                          );
+                                        } else {
+                                          codes.add(form
+                                              .control(_manualCodeFormKey)
+                                              .value);
                                         }
                                         bloc.add(
                                           DigitScannerEvent.handleScanner(
@@ -548,7 +607,7 @@ class _CustomDigitScannerPageState
 
   Future<void> _processImage(InputImage inputImage) async {
     await DigitScannerUtils().processImage(
-      context: context,
+      context: currentContext,
       inputImage: inputImage,
       canProcess: _canProcess,
       isBusy: _isBusy,
@@ -568,39 +627,58 @@ class _CustomDigitScannerPageState
   }
 
   Future<void> handleErrorWrapper(String message) async {
-    await DigitScannerUtils().handleError(
-      context: context,
-      message: message,
-      player: player,
-      result: result,
-      setStateCallback: () {
-        setState(() {
-          _canProcess = true;
-          _isBusy = false;
-        });
-      },
-      localizations: localizations,
-    );
+    if (currentContext.mounted) {
+      await DigitScannerUtils().handleError(
+        context: currentContext,
+        message: message,
+        player: player,
+        result: result,
+        setStateCallback: () {
+          setState(() {
+            _canProcess = true;
+            _isBusy = false;
+          });
+        },
+        localizations: localizations,
+      );
+    }
   }
 
   Future<void> storeCodeWrapper(String code) async {
-    await DigitScannerUtils().storeCode(
-      context: context,
-      code: code,
-      player: player,
-      singleValue: widget.singleValue,
-      updateCodes: (newCodes) {
-        setState(() {
-          codes = newCodes;
-        });
-      },
-      initialCodes: codes,
-    );
+    if (codes.length < widget.quantity) {
+      if (widget.scanType == ScanType.stock &&
+          code.contains(Constants.pipeSeparator)) {
+        code = code.split(Constants.pipeSeparator).last.trim();
+      }
+      await DigitScannerUtils().storeCode(
+        context: currentContext,
+        code: code,
+        player: player,
+        singleValue: widget.singleValue,
+        updateCodes: (newCodes) {
+          setState(() {
+            codes = newCodes;
+          });
+        },
+        initialCodes: codes,
+      );
+    } else {
+      await DigitToast.show(
+        currentContext,
+        options: DigitToastOptions(
+          localizations
+              .translate(i18Local.deliverIntervention.bednetScanMoreThanCount),
+          true,
+          Theme.of(currentContext),
+        ),
+      );
+      await Future.delayed(const Duration(seconds: 2));
+    }
   }
 
   Future<void> storeValueWrapper(GS1Barcode scanData) async {
     await DigitScannerUtils().storeValue(
-      context: context,
+      context: currentContext,
       scanData: scanData,
       player: player,
       updateResult: (newResult) {

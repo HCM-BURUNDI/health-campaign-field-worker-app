@@ -157,6 +157,7 @@ class CustomIndividualDetailsPageState
                               theme,
                             ),
                           );
+                          return;
                         }
                         final userId =
                             RegistrationDeliverySingleton().loggedInUserUuid;
@@ -556,6 +557,7 @@ class CustomIndividualDetailsPageState
                                                   isGS1code: false,
                                                   singleValue: true,
                                                   isEditEnabled: true,
+                                                  manualEnabled: false,
                                                 ),
                                                 settings: const RouteSettings(
                                                     name: '/qr-scanner'),
@@ -583,6 +585,7 @@ class CustomIndividualDetailsPageState
                                             quantity: 1,
                                             isGS1code: false,
                                             singleValue: true,
+                                            manualEnabled: false,
                                           ),
                                           settings: const RouteSettings(
                                               name: '/qr-scanner'),

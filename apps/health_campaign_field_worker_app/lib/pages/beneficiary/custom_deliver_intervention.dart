@@ -83,6 +83,14 @@ class CustomDeliverInterventionPageState
   ) async {
     final lat = locationState.latitude;
     final long = locationState.longitude;
+
+    final code = householdMember.members?.first.address?.first.boundaryCode;
+
+    final name = householdMember.members?.first.address?.first.boundary;
+
+    final boundaryModel = code == null || name == null
+        ? null
+        : BoundaryModel(code: code, name: name);
     context.read<DeliverInterventionBloc>().add(
           DeliverInterventionSubmitEvent(
               task: _getTaskModel(
@@ -108,7 +116,8 @@ class CustomDeliverInterventionPageState
                           BeneficiaryType.household
                   ? true
                   : false,
-              boundaryModel: RegistrationDeliverySingleton().boundary!,
+              boundaryModel:
+                  boundaryModel ?? RegistrationDeliverySingleton().boundary!,
               navigateToSummary: false,
               householdMemberWrapper: householdMember),
         );
@@ -581,7 +590,7 @@ class CustomDeliverInterventionPageState
                                                         .fromLTRB(kPadding,
                                                         kPadding, kPadding, 0),
                                                     child: scannerState
-                                                            .qrCodes.isNotEmpty
+                                                            .barCodes.isNotEmpty
                                                         ? Row(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
@@ -638,6 +647,8 @@ class CustomDeliverInterventionPageState
                                                                               bednetCount < 2,
                                                                           isEditEnabled:
                                                                               true,
+                                                                          manualEnabled:
+                                                                              true,
                                                                         ),
                                                                         settings:
                                                                             const RouteSettings(name: '/qr-scanner'),
@@ -678,6 +689,8 @@ class CustomDeliverInterventionPageState
                                                                         bednetCount <
                                                                             2,
                                                                     isEditEnabled:
+                                                                        true,
+                                                                    manualEnabled:
                                                                         true,
                                                                   ),
                                                                   settings:
@@ -720,6 +733,13 @@ class CustomDeliverInterventionPageState
                                                       i18.deliverIntervention
                                                           .deliveryCommentLabel,
                                                     ),
+                                                    validationMessages: {
+                                                      'sizeLessThan2': (object) =>
+                                                          localizations
+                                                              .translate(i18
+                                                                  .common
+                                                                  .min3CharsRequired),
+                                                    },
                                                   ),
                                                 ],
                                               ),
@@ -1055,7 +1075,10 @@ class CustomDeliverInterventionPageState
                     .value
                 : ''
             : null,
-        validators: [],
+        validators: [
+          Validators.delegate(
+              (validator) => CustomValidator.sizeLessThan2(validator))
+        ],
       ),
       _resourceDeliveredKey: FormArray<ProductVariantModel>(
         [
