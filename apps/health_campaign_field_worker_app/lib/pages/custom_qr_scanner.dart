@@ -74,7 +74,7 @@ class _CustomDigitScannerPageState
   String phase = '00';
 
   RegExp pattern = RegExp(r'^2025-00-48-\d{2}-\d{2}-\d{2}$');
-  RegExp balePattern = RegExp(r'^\d{18}$');
+  // RegExp balePattern = RegExp(r'^\d{18}$');
   late BuildContext currentContext;
   @override
   void initState() {
@@ -477,12 +477,26 @@ class _CustomDigitScannerPageState
                     } else {
                       final bloc = context.read<DigitScannerBloc>();
                       String code = form.control(_manualCodeFormKey).value;
-                      if (widget.isGS1code && balePattern.hasMatch(code)) {
+                      if (widget.isGS1code /*&& balePattern.hasMatch(code)*/) {
                         final String barcode = '00$code';
-                        final parser = GS1BarcodeParser.defaultParser();
-                        GS1Barcode dataResult = parser.parse(barcode);
-                        List<String?> barCodes =
-                            result.map((e) => e.getAIsRawData["00"]).toList();
+                        GS1Barcode? dataResult;
+                        List<String?> barCodes = [];
+                        try {
+                          final parser = GS1BarcodeParser.defaultParser();
+                          dataResult = parser.parse(barcode);
+                          barCodes =
+                              result.map((e) => e.getAIsRawData["00"]).toList();
+                        } catch (e) {
+                          await DigitToast.show(
+                            context,
+                            options: DigitToastOptions(
+                              localizations.translate(i18Local
+                                  .deliverIntervention.patternValidationFailed),
+                              true,
+                              Theme.of(context),
+                            ),
+                          );
+                        }
 
                         if (result.length >= widget.quantity) {
                           await DigitToast.show(
@@ -495,13 +509,15 @@ class _CustomDigitScannerPageState
                             ),
                           );
                         } else if (barCodes
-                            .contains(dataResult.getAIsRawData["00"])) {
+                            .contains(dataResult?.getAIsRawData["00"])) {
                           await handleErrorWrapper(
                             i18Local.deliverIntervention.resourceAlreadyScanned,
                           );
                           return;
                         } else {
-                          result = [...result, dataResult];
+                          result = dataResult != null
+                              ? [...result, dataResult]
+                              : [...result];
                         }
                         bloc.add(
                           DigitScannerEvent.handleScanner(
