@@ -109,7 +109,7 @@ class _CustomDigitScannerPageState
       isTraining = false;
 
       // Phase is usually static, but it could also depend on the environment
-      phase = isTraining ? '00' : '01|02';
+      phase = isTraining ? '00' : '01||02||03';
 
       // For training, district code is 48, else it is [01-47]
       districtRange = isTraining ? '48' : '[01-47]';
