@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:health_campaign_field_worker_app/blocs/scanner/custom_digit_scanner_bloc.dart';
 import 'package:survey_form/survey_form.dart';
 import 'package:attendance_management/attendance_management.dart';
@@ -376,6 +379,40 @@ class MainApplicationState extends State<MainApplication>
                               final env = envConfig.variables.envType;
                               if (env == EnvType.prod) {
                                 return child ?? const SizedBox.shrink();
+                              }
+                              if (env == EnvType.uat) {
+                                return Scaffold(
+                                  body: Stack(
+                                    children: [
+                                      Positioned.fill(
+                                          child:
+                                              child ?? const SizedBox.shrink()),
+                                      Positioned.fill(
+                                        child: IgnorePointer(
+                                          child: Transform.rotate(
+                                            angle: -pi / 4,
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                child: AutoSizeText(
+                                                  'training'.toUpperCase(),
+                                                  maxLines: 1,
+                                                  style: TextStyle(
+                                                    fontSize: 50,
+                                                    color: Colors.black
+                                                        .withAlpha(25),
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
                               }
                               return Banner(
                                 message: envConfig.variables.envType.name,
