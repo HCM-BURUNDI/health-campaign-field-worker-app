@@ -66,6 +66,14 @@ class CustomStockDetailsPageState
 
   List<GS1Barcode> scannedResources = [];
 
+  String? gs1Decoder(GS1Barcode elements) {
+    String? value = elements.getAIsRawData["00"];
+    if (value == null) {
+      value = elements.getAIsRawData["21"];
+    }
+    return value;
+  }
+
   FormGroup _form(StockRecordEntryType stockType) {
     return fb.group({
       _productVariantKey: FormControl<ProductVariantModel>(),
@@ -882,12 +890,11 @@ class CustomStockDetailsPageState
                                                           'deliveryTeam',
                                                           deliveryTeamName,
                                                         ),
-                                                      if (driverName != null &&
-                                                          driverName.isNotEmpty)
-                                                        AdditionalField(
-                                                          'driver_name',
-                                                          driverName,
-                                                        ),
+
+                                                      AdditionalField(
+                                                        'driver_name',
+                                                        driverName,
+                                                      ),
                                                       if (balesQuantity != null)
                                                         AdditionalField(
                                                             _balesQuantityKey,
@@ -1282,10 +1289,8 @@ class CustomStockDetailsPageState
                                                     );
 
                                                     form
-                                                        .control(
-                                                          _driverNameKey,
-                                                        )
-                                                        .touched;
+                                                        .control(_driverNameKey)
+                                                        .markAsTouched();
                                                     form
                                                         .control(
                                                           _waybillNumberKey,
@@ -1492,9 +1497,8 @@ class CustomStockDetailsPageState
 
                                                         form
                                                             .control(
-                                                              _driverNameKey,
-                                                            )
-                                                            .touched;
+                                                                _driverNameKey)
+                                                            .markAsTouched();
                                                         form
                                                             .control(
                                                               _waybillNumberKey,
@@ -2107,9 +2111,8 @@ class CustomStockDetailsPageState
                                           ),
                                           ...scannedResources.map((e) => Align(
                                                 alignment: Alignment.centerLeft,
-                                                child: Text(e
-                                                    .elements.values.first.data
-                                                    .toString()),
+                                                child:
+                                                    Text(gs1Decoder(e) ?? ""),
                                               ))
                                         ]),
 
@@ -2276,11 +2279,13 @@ class CustomStockDetailsPageState
       BarcodeScanType barcodeScanType = element.$1;
       for (var e in element.$2.elements.entries) {
         String key = e.key.toString();
-        if (barcodeScanType == BarcodeScanType.manual) {
-          key = "manual_${e.key}";
+        if (key == "00" || key == "21") {
+          if (barcodeScanType == BarcodeScanType.manual) {
+            key = "manual_${e.key}";
+          }
+          keys.add(key);
+          values.add(e.value.data.toString());
         }
-        keys.add(key);
-        values.add(e.value.data.toString());
       }
       additionalFields.add(AdditionalField(keys.join('|'), values.join('|')));
     }
