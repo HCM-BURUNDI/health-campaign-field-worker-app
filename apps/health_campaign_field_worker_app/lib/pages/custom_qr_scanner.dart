@@ -75,7 +75,7 @@ class _CustomDigitScannerPageState
   String phase = '00';
 
   RegExp pattern = RegExp(r'^2025-00-48-\d{2}-\d{2}-\d{2}$');
-  RegExp balePattern = RegExp(r'^\d{18}$');
+  RegExp balePattern = RegExp(r'^[a-zA-Z0-9]{9,21}$');
   late BuildContext currentContext;
   @override
   void initState() {
@@ -481,12 +481,12 @@ class _CustomDigitScannerPageState
                       final bloc = context.read<CustomDigitScannerBloc>();
                       String code = form.control(_manualCodeFormKey).value;
                       if (widget.isGS1code && balePattern.hasMatch(code)) {
-                        final String barcode = '00$code';
+                        final String barcode = '21$code';
                         final parser = GS1BarcodeParser.defaultParser();
                         (BarcodeScanType, GS1Barcode) dataResult =
                             (BarcodeScanType.manual, parser.parse(barcode));
                         List<String?> barCodes = result
-                            .map((e) => e.$2.getAIsRawData["00"])
+                            .map((e) => e.$2.getAIsRawData["21"])
                             .toList();
 
                         if (result.length >= widget.quantity) {
@@ -500,7 +500,7 @@ class _CustomDigitScannerPageState
                             ),
                           );
                         } else if (barCodes
-                            .contains(dataResult.$2.getAIsRawData["00"])) {
+                            .contains(dataResult.$2.getAIsRawData["21"])) {
                           await handleErrorWrapper(
                             i18Local.deliverIntervention.resourceAlreadyScanned,
                           );
