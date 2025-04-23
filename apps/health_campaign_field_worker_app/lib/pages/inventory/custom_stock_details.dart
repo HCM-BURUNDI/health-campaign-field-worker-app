@@ -890,11 +890,12 @@ class CustomStockDetailsPageState
                                                           'deliveryTeam',
                                                           deliveryTeamName,
                                                         ),
-
-                                                      AdditionalField(
-                                                        'driver_name',
-                                                        driverName,
-                                                      ),
+                                                      if (driverName != null &&
+                                                          driverName.isNotEmpty)
+                                                        AdditionalField(
+                                                          'driver_name',
+                                                          driverName,
+                                                        ),
                                                       if (balesQuantity != null)
                                                         AdditionalField(
                                                             _balesQuantityKey,
@@ -1289,8 +1290,10 @@ class CustomStockDetailsPageState
                                                     );
 
                                                     form
-                                                        .control(_driverNameKey)
-                                                        .markAsTouched();
+                                                        .control(
+                                                          _driverNameKey,
+                                                        )
+                                                        .touched;
                                                     form
                                                         .control(
                                                           _waybillNumberKey,
@@ -1497,8 +1500,9 @@ class CustomStockDetailsPageState
 
                                                         form
                                                             .control(
-                                                                _driverNameKey)
-                                                            .markAsTouched();
+                                                              _driverNameKey,
+                                                            )
+                                                            .touched;
                                                         form
                                                             .control(
                                                               _waybillNumberKey,
