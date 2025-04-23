@@ -1011,7 +1011,7 @@ class CustomDeliverInterventionPageState
     if (additionalFields == null) return 1;
 
     final bedField = additionalFields.firstWhereOrNull(
-      (field) => field.key == 'noOfBedCount',
+      (field) => field.key == 'bedCount',
     );
 
     return int.tryParse(bedField?.value ?? '1') ?? 1;
