@@ -71,16 +71,18 @@ class CustomResourceBeneficiaryCardState
               );
             },
           ),
-          CustomDigitIntegerFormPicker(
-            incrementer: true,
-            readOnly: true,
-            formControlName: 'quantityDistributed.${widget.cardIndex}',
-            form: widget.form,
-            label: localizations.translate(
-              i18.deliverIntervention.quantityDistributedLabel,
+          AbsorbPointer(
+            child: CustomDigitIntegerFormPicker(
+              incrementer: true,
+              readOnly: true,
+              formControlName: 'quantityDistributed.${widget.cardIndex}',
+              form: widget.form,
+              label: localizations.translate(
+                i18.deliverIntervention.quantityDistributedLabel,
+              ),
+              minimum: 1,
+              buttonWidth: 50,
             ),
-            minimum: 1,
-            buttonWidth: 50,
           ),
           SizedBox(
             child: Align(
