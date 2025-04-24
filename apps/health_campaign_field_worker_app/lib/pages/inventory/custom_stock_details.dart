@@ -96,10 +96,14 @@ class CustomStockDetailsPageState
       _typeOfTransportKey: FormControl<String>(),
       _driverNameKey: FormControl<String>(
         validators: [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(200),
-        ],
+          StockRecordEntryType.receipt,
+        ].contains(stockType)
+            ? [
+                Validators.required,
+                Validators.minLength(2),
+                Validators.maxLength(200)
+              ]
+            : [],
       ),
       _balesQuantityKey: FormControl<int>(
         validators: [
@@ -1189,17 +1193,27 @@ class CustomStockDetailsPageState
 
                                                   form
                                                       .control(
-                                                    _driverNameKey,
-                                                  )
+                                                        _driverNameKey,
+                                                      )
                                                       .setValidators(
-                                                    [
-                                                      Validators.required,
-                                                      Validators.minLength(2),
-                                                      Validators.maxLength(200),
-                                                    ],
-                                                    updateParent: true,
-                                                    autoValidate: true,
-                                                  );
+                                                        [
+                                                          StockRecordEntryType
+                                                              .receipt,
+                                                        ].contains(entryType)
+                                                            ? [
+                                                                Validators
+                                                                    .required,
+                                                                Validators
+                                                                    .minLength(
+                                                                        2),
+                                                                Validators
+                                                                    .maxLength(
+                                                                        200)
+                                                              ]
+                                                            : [],
+                                                        updateParent: true,
+                                                        autoValidate: true,
+                                                      );
 
                                                   form
                                                       .control(
@@ -1253,18 +1267,27 @@ class CustomStockDetailsPageState
                                                     );
                                                     form
                                                         .control(
-                                                      _driverNameKey,
-                                                    )
+                                                          _driverNameKey,
+                                                        )
                                                         .setValidators(
-                                                      [
-                                                        Validators.required,
-                                                        Validators.minLength(2),
-                                                        Validators.maxLength(
-                                                            200),
-                                                      ],
-                                                      updateParent: true,
-                                                      autoValidate: true,
-                                                    );
+                                                          [
+                                                            StockRecordEntryType
+                                                                .receipt,
+                                                          ].contains(entryType)
+                                                              ? [
+                                                                  Validators
+                                                                      .required,
+                                                                  Validators
+                                                                      .minLength(
+                                                                          2),
+                                                                  Validators
+                                                                      .maxLength(
+                                                                          200)
+                                                                ]
+                                                              : [],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
 
                                                     form
                                                         .control(
@@ -1386,19 +1409,28 @@ class CustomStockDetailsPageState
                                                           true;
                                                       form
                                                           .control(
-                                                        _driverNameKey,
-                                                      )
+                                                            _driverNameKey,
+                                                          )
                                                           .setValidators(
-                                                        [
-                                                          Validators.required,
-                                                          Validators.minLength(
-                                                              2),
-                                                          Validators.maxLength(
-                                                              200),
-                                                        ],
-                                                        updateParent: true,
-                                                        autoValidate: true,
-                                                      );
+                                                            [
+                                                              StockRecordEntryType
+                                                                  .receipt,
+                                                            ].contains(
+                                                                    entryType)
+                                                                ? [
+                                                                    Validators
+                                                                        .required,
+                                                                    Validators
+                                                                        .minLength(
+                                                                            2),
+                                                                    Validators
+                                                                        .maxLength(
+                                                                            200)
+                                                                  ]
+                                                                : [],
+                                                            updateParent: true,
+                                                            autoValidate: true,
+                                                          );
 
                                                       form
                                                           .control(
@@ -1451,19 +1483,30 @@ class CustomStockDetailsPageState
                                                       if (isWareHouseMgr) {
                                                         form
                                                             .control(
-                                                          _driverNameKey,
-                                                        )
+                                                              _driverNameKey,
+                                                            )
                                                             .setValidators(
-                                                          [
-                                                            Validators.required,
-                                                            Validators
-                                                                .minLength(2),
-                                                            Validators
-                                                                .maxLength(200),
-                                                          ],
-                                                          updateParent: true,
-                                                          autoValidate: true,
-                                                        );
+                                                              [
+                                                                StockRecordEntryType
+                                                                    .receipt,
+                                                              ].contains(
+                                                                      entryType)
+                                                                  ? [
+                                                                      Validators
+                                                                          .required,
+                                                                      Validators
+                                                                          .minLength(
+                                                                              2),
+                                                                      Validators
+                                                                          .maxLength(
+                                                                              200)
+                                                                    ]
+                                                                  : [],
+                                                              updateParent:
+                                                                  true,
+                                                              autoValidate:
+                                                                  true,
+                                                            );
 
                                                         form
                                                             .control(
@@ -1868,6 +1911,11 @@ class CustomStockDetailsPageState
                                     ),
                                     isRequired: true,
                                     formControlName: _driverNameKey,
+                                    onChanged: (value) {
+                                      form.control(_driverNameKey).value =
+                                          value.value;
+                                      setState(() {});
+                                    },
                                     validationMessages: {
                                       'required': (object) =>
                                           localizations.translate(
