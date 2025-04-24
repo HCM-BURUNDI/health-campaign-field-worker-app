@@ -216,6 +216,9 @@ class CustomHouseHoldDetailsPageState
                                                 AdditionalFieldsType.children
                                                     .toValue()),
                                     ...addAdditionalField(householdModel),
+                                    AdditionalField(Constants.communityKey,
+                                        CommunityTypes.specialGroups.toValue()),
+                                    AdditionalField('bedCount', 3)
                                   ]));
 
                           bloc.add(

@@ -397,8 +397,7 @@ class _CustomSearchBeneficiaryPageStateState
           ),
         ),
         bottomNavigationBar: Offstage(
-          offstage: RegistrationDeliverySingleton().householdType ==
-              HouseholdType.community,
+          offstage: false,
           child: SizedBox(
             height: 80,
             child: Card(
@@ -407,7 +406,7 @@ class _CustomSearchBeneficiaryPageStateState
                 padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
                 child: Column(
                   children: [
-                    context.isRegistrar
+                    true
                         ? DigitElevatedButton(
                             onPressed: searchHouseholdsState.loading
                                 ? null
