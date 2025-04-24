@@ -32,8 +32,8 @@
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:fullBackupOnly="false"
-        android:icon="@mipmap/burundi_logo_tsinda_malaria"
-        android:label="Tsinda Malaria">
+        android:icon="@mipmap/ic_launcher_training"
+        android:label="FORMATION TSINDA MALARYIA ">
         <service
             android:name=".LocationService"
             android:enabled="true"
