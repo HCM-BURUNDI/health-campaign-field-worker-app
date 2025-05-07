@@ -624,7 +624,9 @@ class CustomStockDetailsPageState
                                                     productVariant.id,
                                                     stockState
                                                         .facilityModel!.id,
-                                                    selectedFacilityId);
+                                                    deliveryTeamSelected
+                                                        ? deliveryTeamName
+                                                        : selectedFacilityId);
                                             if (returnValidation.$1 == false) {
                                               final alert =
                                                   await DigitDialog.show<bool>(
