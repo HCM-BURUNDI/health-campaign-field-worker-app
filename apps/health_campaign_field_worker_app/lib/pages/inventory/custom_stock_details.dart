@@ -723,6 +723,7 @@ class CustomStockDetailsPageState
                                           String? senderId;
                                           String? senderType;
                                           String? receiverId;
+                                          String? preReceiverId;
                                           String? receiverType;
 
                                           final primaryType =
@@ -745,6 +746,7 @@ class CustomStockDetailsPageState
                                                 senderType = "WAREHOUSE";
                                               }
                                               receiverId = primaryId;
+                                              preReceiverId = primaryId;
                                               receiverType = primaryType;
 
                                               break;
@@ -754,6 +756,8 @@ class CustomStockDetailsPageState
                                                 receiverType = "STAFF";
                                               } else {
                                                 receiverId = secondaryParty?.id;
+                                                preReceiverId =
+                                                    secondaryParty?.id;
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
@@ -765,6 +769,8 @@ class CustomStockDetailsPageState
                                                 receiverType = "STAFF";
                                               } else {
                                                 receiverId = secondaryParty?.id;
+                                                preReceiverId =
+                                                    secondaryParty?.id;
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
@@ -779,6 +785,7 @@ class CustomStockDetailsPageState
                                                 senderType = "WAREHOUSE";
                                               }
                                               receiverId = primaryId;
+                                              preReceiverId = primaryId;
                                               receiverType = primaryType;
 
                                               break;
@@ -788,6 +795,8 @@ class CustomStockDetailsPageState
                                                 receiverType = "STAFF";
                                               } else {
                                                 receiverId = secondaryParty?.id;
+                                                preReceiverId =
+                                                    secondaryParty?.id;
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
@@ -936,6 +945,10 @@ class CustomStockDetailsPageState
                                                       if (additionalFields
                                                           .isNotEmpty)
                                                         ...additionalFields,
+                                                      AdditionalField(
+                                                        'receiverId',
+                                                        preReceiverId,
+                                                      ),
                                                     ],
                                                   )
                                                 : null,

@@ -471,19 +471,11 @@ class CustomInventoryReportDetailsPageState
                                                                       InventoryReportType
                                                                           .damage
                                                               ? localizations
-                                                                      .translate(
-                                                                          'FAC_${model.receiverId}') ??
-                                                                  localizations
-                                                                      .translate(
-                                                                          model.receiverType ??
-                                                                              '')
+                                                                  .translate(
+                                                                      'FAC_${model.additionalFields?.fields.firstWhereOrNull((e) => e.key == "receiverId") ?? model.receiverId}')
                                                               : localizations
-                                                                      .translate(
-                                                                          'FAC_${model.senderId}') ??
-                                                                  localizations
-                                                                      .translate(
-                                                                          model.receiverType ??
-                                                                              ''),
+                                                                  .translate(
+                                                                      'FAC_${model.senderId}'),
                                                         ),
                                                       ],
                                                     ),
