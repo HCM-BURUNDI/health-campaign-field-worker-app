@@ -163,6 +163,16 @@ class CustomStockDetailsPageState
           transactionReason: [],
           transactionType: [TransactionType.dispatched.toValue()]),
     );
+    List<StockModel> newStockModelsIssued = stockModelsIssued.where((e) {
+      return [
+            TransactionReason.damagedInStorage.toValue(),
+            TransactionReason.damagedInTransit.toValue(),
+            TransactionReason.lostInStorage.toValue(),
+            TransactionReason.lostInTransit.toValue()
+          ].contains(e.transactionReason) ==
+          false;
+    }).toList();
+
     List<StockModel> stockModelsReturned = await stockRepository.search(
       StockSearchModel(
           productVariantId: productVariantId,
@@ -173,7 +183,7 @@ class CustomStockDetailsPageState
     );
     int issuedStock = 0;
     int preReturnedStock = 0;
-    for (var stock in stockModelsIssued) {
+    for (var stock in newStockModelsIssued) {
       issuedStock += int.parse(stock.quantity ?? "0");
     }
     for (var stock in stockModelsReturned) {
