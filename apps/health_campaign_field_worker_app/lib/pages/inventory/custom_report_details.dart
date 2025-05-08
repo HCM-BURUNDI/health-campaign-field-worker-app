@@ -472,10 +472,10 @@ class CustomInventoryReportDetailsPageState
                                                                           .damage
                                                               ? localizations
                                                                   .translate(
-                                                                      'FAC_${model.additionalFields?.fields.firstWhereOrNull((e) => e.key == "receiverId") ?? model.receiverId}')
+                                                                      'FAC_${model.additionalFields?.fields.firstWhereOrNull((e) => e.key == "receiverId")?.value ?? model.receiverId}')
                                                               : localizations
                                                                   .translate(
-                                                                      'FAC_${model.senderId}'),
+                                                                      'FAC_${model.additionalFields?.fields.firstWhereOrNull((e) => e.key == "senderId")?.value ?? model.senderId}'),
                                                         ),
                                                       ],
                                                     ),

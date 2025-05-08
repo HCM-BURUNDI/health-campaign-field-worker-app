@@ -723,6 +723,7 @@ class CustomStockDetailsPageState
                                           String? senderId;
                                           String? senderType;
                                           String? receiverId;
+                                          String? preSenderId;
                                           String? preReceiverId;
                                           String? receiverType;
 
@@ -738,6 +739,7 @@ class CustomStockDetailsPageState
 
                                           switch (entryType) {
                                             case StockRecordEntryType.receipt:
+                                              preSenderId = secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 senderId = deliveryTeamName;
                                                 senderType = "STAFF";
@@ -751,32 +753,35 @@ class CustomStockDetailsPageState
 
                                               break;
                                             case StockRecordEntryType.loss:
+                                              preReceiverId =
+                                                  secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 receiverId = deliveryTeamName;
                                                 receiverType = "STAFF";
                                               } else {
                                                 receiverId = secondaryParty?.id;
-                                                preReceiverId =
-                                                    secondaryParty?.id;
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
+                                              preSenderId = primaryId;
                                               senderType = primaryType;
                                               break;
                                             case StockRecordEntryType.damaged:
+                                              preReceiverId =
+                                                  secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 receiverId = deliveryTeamName;
                                                 receiverType = "STAFF";
                                               } else {
                                                 receiverId = secondaryParty?.id;
-                                                preReceiverId =
-                                                    secondaryParty?.id;
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
+                                              preSenderId = primaryId;
                                               senderType = primaryType;
                                               break;
                                             case StockRecordEntryType.returned:
+                                              preSenderId = secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 senderId = deliveryTeamName;
                                                 senderType = "STAFF";
@@ -790,16 +795,17 @@ class CustomStockDetailsPageState
 
                                               break;
                                             case StockRecordEntryType.dispatch:
+                                              preReceiverId =
+                                                  secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 receiverId = deliveryTeamName;
                                                 receiverType = "STAFF";
                                               } else {
                                                 receiverId = secondaryParty?.id;
-                                                preReceiverId =
-                                                    secondaryParty?.id;
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
+                                              preSenderId = primaryId;
                                               senderType = primaryType;
                                               break;
                                           }
@@ -945,10 +951,16 @@ class CustomStockDetailsPageState
                                                       if (additionalFields
                                                           .isNotEmpty)
                                                         ...additionalFields,
-                                                      AdditionalField(
-                                                        'receiverId',
-                                                        preReceiverId,
-                                                      ),
+                                                      if (preSenderId != null)
+                                                        AdditionalField(
+                                                          'senderId',
+                                                          preSenderId,
+                                                        ),
+                                                      if (preReceiverId != null)
+                                                        AdditionalField(
+                                                          'receiverId',
+                                                          preReceiverId,
+                                                        ),
                                                     ],
                                                   )
                                                 : null,
