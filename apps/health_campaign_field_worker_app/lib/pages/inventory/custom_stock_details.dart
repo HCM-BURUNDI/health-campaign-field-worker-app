@@ -163,6 +163,16 @@ class CustomStockDetailsPageState
           transactionReason: [],
           transactionType: [TransactionType.dispatched.toValue()]),
     );
+    List<StockModel> newStockModelsIssued = stockModelsIssued.where((e) {
+      return [
+            TransactionReason.damagedInStorage.toValue(),
+            TransactionReason.damagedInTransit.toValue(),
+            TransactionReason.lostInStorage.toValue(),
+            TransactionReason.lostInTransit.toValue()
+          ].contains(e.transactionReason) ==
+          false;
+    }).toList();
+
     List<StockModel> stockModelsReturned = await stockRepository.search(
       StockSearchModel(
           productVariantId: productVariantId,
@@ -173,7 +183,7 @@ class CustomStockDetailsPageState
     );
     int issuedStock = 0;
     int preReturnedStock = 0;
-    for (var stock in stockModelsIssued) {
+    for (var stock in newStockModelsIssued) {
       issuedStock += int.parse(stock.quantity ?? "0");
     }
     for (var stock in stockModelsReturned) {
@@ -624,7 +634,9 @@ class CustomStockDetailsPageState
                                                     productVariant.id,
                                                     stockState
                                                         .facilityModel!.id,
-                                                    selectedFacilityId);
+                                                    deliveryTeamSelected
+                                                        ? deliveryTeamName
+                                                        : selectedFacilityId);
                                             if (returnValidation.$1 == false) {
                                               final alert =
                                                   await DigitDialog.show<bool>(
@@ -721,6 +733,8 @@ class CustomStockDetailsPageState
                                           String? senderId;
                                           String? senderType;
                                           String? receiverId;
+                                          String? preSenderId;
+                                          String? preReceiverId;
                                           String? receiverType;
 
                                           final primaryType =
@@ -735,6 +749,7 @@ class CustomStockDetailsPageState
 
                                           switch (entryType) {
                                             case StockRecordEntryType.receipt:
+                                              preSenderId = secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 senderId = deliveryTeamName;
                                                 senderType = "STAFF";
@@ -743,10 +758,13 @@ class CustomStockDetailsPageState
                                                 senderType = "WAREHOUSE";
                                               }
                                               receiverId = primaryId;
+                                              preReceiverId = primaryId;
                                               receiverType = primaryType;
 
                                               break;
                                             case StockRecordEntryType.loss:
+                                              preReceiverId =
+                                                  secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 receiverId = deliveryTeamName;
                                                 receiverType = "STAFF";
@@ -755,9 +773,12 @@ class CustomStockDetailsPageState
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
+                                              preSenderId = primaryId;
                                               senderType = primaryType;
                                               break;
                                             case StockRecordEntryType.damaged:
+                                              preReceiverId =
+                                                  secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 receiverId = deliveryTeamName;
                                                 receiverType = "STAFF";
@@ -766,9 +787,11 @@ class CustomStockDetailsPageState
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
+                                              preSenderId = primaryId;
                                               senderType = primaryType;
                                               break;
                                             case StockRecordEntryType.returned:
+                                              preSenderId = secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 senderId = deliveryTeamName;
                                                 senderType = "STAFF";
@@ -777,10 +800,13 @@ class CustomStockDetailsPageState
                                                 senderType = "WAREHOUSE";
                                               }
                                               receiverId = primaryId;
+                                              preReceiverId = primaryId;
                                               receiverType = primaryType;
 
                                               break;
                                             case StockRecordEntryType.dispatch:
+                                              preReceiverId =
+                                                  secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 receiverId = deliveryTeamName;
                                                 receiverType = "STAFF";
@@ -789,6 +815,7 @@ class CustomStockDetailsPageState
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
+                                              preSenderId = primaryId;
                                               senderType = primaryType;
                                               break;
                                           }
@@ -934,6 +961,16 @@ class CustomStockDetailsPageState
                                                       if (additionalFields
                                                           .isNotEmpty)
                                                         ...additionalFields,
+                                                      if (preSenderId != null)
+                                                        AdditionalField(
+                                                          'senderId',
+                                                          preSenderId,
+                                                        ),
+                                                      if (preReceiverId != null)
+                                                        AdditionalField(
+                                                          'receiverId',
+                                                          preReceiverId,
+                                                        ),
                                                     ],
                                                   )
                                                 : null,
