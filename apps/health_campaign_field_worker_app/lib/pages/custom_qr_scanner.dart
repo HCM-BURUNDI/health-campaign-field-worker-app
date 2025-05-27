@@ -75,7 +75,7 @@ class _CustomDigitScannerPageState
   String phase = '00';
 
   RegExp pattern = RegExp(r'^2025-00-48-\d{2}-\d{2}-\d{2}$');
-  RegExp balePattern = RegExp(r'^\d{18}$');
+  RegExp balePattern = RegExp(r'^[a-zA-Z0-9]{9,20}$');
   late BuildContext currentContext;
   @override
   void initState() {
@@ -109,10 +109,10 @@ class _CustomDigitScannerPageState
       isTraining = false;
 
       // Phase is usually static, but it could also depend on the environment
-      phase = isTraining ? '00' : '01|02';
+      phase = isTraining ? '00' : '(01|02|03)';
 
-      // For training, district code is 48, else it is [01-47]
-      districtRange = isTraining ? '48' : '[01-47]';
+      // For training, district code is 48, else it is [01-49]
+      districtRange = isTraining ? '48' : '(?:0[1-9]|[1-3][0-9]|4[0-9])';
 
       // Construct the regex dynamically
       pattern = RegExp(
@@ -481,39 +481,53 @@ class _CustomDigitScannerPageState
                       final bloc = context.read<CustomDigitScannerBloc>();
                       String code = form.control(_manualCodeFormKey).value;
                       if (widget.isGS1code && balePattern.hasMatch(code)) {
-                        final String barcode = '00$code';
+                        final String barcode = '21$code';
                         final parser = GS1BarcodeParser.defaultParser();
-                        (BarcodeScanType, GS1Barcode) dataResult =
-                            (BarcodeScanType.manual, parser.parse(barcode));
-                        List<String?> barCodes = result
-                            .map((e) => e.$2.getAIsRawData["00"])
-                            .toList();
+                        try {
+                          (BarcodeScanType, GS1Barcode) dataResult =
+                              (BarcodeScanType.manual, parser.parse(barcode));
+                          List<String?> barCodes = result
+                              .map((e) => e.$2.getAIsRawData["21"])
+                              .toList();
 
-                        if (result.length >= widget.quantity) {
+                          if (result.length >= widget.quantity) {
+                            await DigitToast.show(
+                              context,
+                              options: DigitToastOptions(
+                                localizations.translate(i18Local
+                                    .deliverIntervention
+                                    .bednetScanMoreThanCount),
+                                true,
+                                Theme.of(context),
+                              ),
+                            );
+                          } else if (barCodes
+                              .contains(dataResult.$2.getAIsRawData["21"])) {
+                            await handleErrorWrapper(
+                              i18Local
+                                  .deliverIntervention.resourceAlreadyScanned,
+                            );
+                            return;
+                          } else {
+                            result = [...result, dataResult];
+                          }
+                          bloc.add(
+                            CustomDigitScannerEvent.handleScanner(
+                              barCode: result,
+                              qrCode: state.qrCodes,
+                            ),
+                          );
+                        } catch (_) {
                           await DigitToast.show(
                             context,
                             options: DigitToastOptions(
                               localizations.translate(i18Local
-                                  .deliverIntervention.bednetScanMoreThanCount),
+                                  .deliverIntervention.patternValidationFailed),
                               true,
                               Theme.of(context),
                             ),
                           );
-                        } else if (barCodes
-                            .contains(dataResult.$2.getAIsRawData["00"])) {
-                          await handleErrorWrapper(
-                            i18Local.deliverIntervention.resourceAlreadyScanned,
-                          );
-                          return;
-                        } else {
-                          result = [...result, dataResult];
                         }
-                        bloc.add(
-                          CustomDigitScannerEvent.handleScanner(
-                            barCode: result,
-                            qrCode: state.qrCodes,
-                          ),
-                        );
                       } else if (!widget.isGS1code && pattern.hasMatch(code)) {
                         // Info when quantity is provided and user enters more resource then replace the (only when quantity 1 rest cases this does not follow)
                         if (codes.length >= widget.quantity) {

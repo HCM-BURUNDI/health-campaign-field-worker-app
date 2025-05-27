@@ -66,6 +66,14 @@ class CustomStockDetailsPageState
 
   List<GS1Barcode> scannedResources = [];
 
+  String? gs1Decoder(GS1Barcode elements) {
+    String? value = elements.getAIsRawData["00"];
+    if (value == null) {
+      value = elements.getAIsRawData["21"];
+    }
+    return value;
+  }
+
   FormGroup _form(StockRecordEntryType stockType) {
     return fb.group({
       _productVariantKey: FormControl<ProductVariantModel>(),
@@ -87,7 +95,15 @@ class CustomStockDetailsPageState
       _vehicleNumberKey: FormControl<String>(),
       _typeOfTransportKey: FormControl<String>(),
       _driverNameKey: FormControl<String>(
-        validators: [],
+        validators: [
+          StockRecordEntryType.receipt,
+        ].contains(stockType)
+            ? [
+                Validators.required,
+                Validators.minLength(2),
+                Validators.maxLength(200)
+              ]
+            : [],
       ),
       _balesQuantityKey: FormControl<int>(
         validators: [
@@ -147,6 +163,16 @@ class CustomStockDetailsPageState
           transactionReason: [],
           transactionType: [TransactionType.dispatched.toValue()]),
     );
+    List<StockModel> newStockModelsIssued = stockModelsIssued.where((e) {
+      return [
+            TransactionReason.damagedInStorage.toValue(),
+            TransactionReason.damagedInTransit.toValue(),
+            TransactionReason.lostInStorage.toValue(),
+            TransactionReason.lostInTransit.toValue()
+          ].contains(e.transactionReason) ==
+          false;
+    }).toList();
+
     List<StockModel> stockModelsReturned = await stockRepository.search(
       StockSearchModel(
           productVariantId: productVariantId,
@@ -157,7 +183,7 @@ class CustomStockDetailsPageState
     );
     int issuedStock = 0;
     int preReturnedStock = 0;
-    for (var stock in stockModelsIssued) {
+    for (var stock in newStockModelsIssued) {
       issuedStock += int.parse(stock.quantity ?? "0");
     }
     for (var stock in stockModelsReturned) {
@@ -608,7 +634,9 @@ class CustomStockDetailsPageState
                                                     productVariant.id,
                                                     stockState
                                                         .facilityModel!.id,
-                                                    selectedFacilityId);
+                                                    deliveryTeamSelected
+                                                        ? deliveryTeamName
+                                                        : selectedFacilityId);
                                             if (returnValidation.$1 == false) {
                                               final alert =
                                                   await DigitDialog.show<bool>(
@@ -705,6 +733,8 @@ class CustomStockDetailsPageState
                                           String? senderId;
                                           String? senderType;
                                           String? receiverId;
+                                          String? preSenderId;
+                                          String? preReceiverId;
                                           String? receiverType;
 
                                           final primaryType =
@@ -719,6 +749,7 @@ class CustomStockDetailsPageState
 
                                           switch (entryType) {
                                             case StockRecordEntryType.receipt:
+                                              preSenderId = secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 senderId = deliveryTeamName;
                                                 senderType = "STAFF";
@@ -727,10 +758,13 @@ class CustomStockDetailsPageState
                                                 senderType = "WAREHOUSE";
                                               }
                                               receiverId = primaryId;
+                                              preReceiverId = primaryId;
                                               receiverType = primaryType;
 
                                               break;
                                             case StockRecordEntryType.loss:
+                                              preReceiverId =
+                                                  secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 receiverId = deliveryTeamName;
                                                 receiverType = "STAFF";
@@ -739,9 +773,12 @@ class CustomStockDetailsPageState
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
+                                              preSenderId = primaryId;
                                               senderType = primaryType;
                                               break;
                                             case StockRecordEntryType.damaged:
+                                              preReceiverId =
+                                                  secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 receiverId = deliveryTeamName;
                                                 receiverType = "STAFF";
@@ -750,9 +787,11 @@ class CustomStockDetailsPageState
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
+                                              preSenderId = primaryId;
                                               senderType = primaryType;
                                               break;
                                             case StockRecordEntryType.returned:
+                                              preSenderId = secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 senderId = deliveryTeamName;
                                                 senderType = "STAFF";
@@ -761,10 +800,13 @@ class CustomStockDetailsPageState
                                                 senderType = "WAREHOUSE";
                                               }
                                               receiverId = primaryId;
+                                              preReceiverId = primaryId;
                                               receiverType = primaryType;
 
                                               break;
                                             case StockRecordEntryType.dispatch:
+                                              preReceiverId =
+                                                  secondaryParty?.id;
                                               if (deliveryTeamSelected) {
                                                 receiverId = deliveryTeamName;
                                                 receiverType = "STAFF";
@@ -773,6 +815,7 @@ class CustomStockDetailsPageState
                                                 receiverType = "WAREHOUSE";
                                               }
                                               senderId = primaryId;
+                                              preSenderId = primaryId;
                                               senderType = primaryType;
                                               break;
                                           }
@@ -918,6 +961,16 @@ class CustomStockDetailsPageState
                                                       if (additionalFields
                                                           .isNotEmpty)
                                                         ...additionalFields,
+                                                      if (preSenderId != null)
+                                                        AdditionalField(
+                                                          'senderId',
+                                                          preSenderId,
+                                                        ),
+                                                      if (preReceiverId != null)
+                                                        AdditionalField(
+                                                          'receiverId',
+                                                          preReceiverId,
+                                                        ),
                                                     ],
                                                   )
                                                 : null,
@@ -1177,16 +1230,27 @@ class CustomStockDetailsPageState
 
                                                   form
                                                       .control(
-                                                    _driverNameKey,
-                                                  )
+                                                        _driverNameKey,
+                                                      )
                                                       .setValidators(
-                                                    [
-                                                      Validators.minLength(2),
-                                                      Validators.maxLength(200),
-                                                    ],
-                                                    updateParent: true,
-                                                    autoValidate: true,
-                                                  );
+                                                        [
+                                                          StockRecordEntryType
+                                                              .receipt,
+                                                        ].contains(entryType)
+                                                            ? [
+                                                                Validators
+                                                                    .required,
+                                                                Validators
+                                                                    .minLength(
+                                                                        2),
+                                                                Validators
+                                                                    .maxLength(
+                                                                        200)
+                                                              ]
+                                                            : [],
+                                                        updateParent: true,
+                                                        autoValidate: true,
+                                                      );
 
                                                   form
                                                       .control(
@@ -1240,17 +1304,27 @@ class CustomStockDetailsPageState
                                                     );
                                                     form
                                                         .control(
-                                                      _driverNameKey,
-                                                    )
+                                                          _driverNameKey,
+                                                        )
                                                         .setValidators(
-                                                      [
-                                                        Validators.minLength(2),
-                                                        Validators.maxLength(
-                                                            200),
-                                                      ],
-                                                      updateParent: true,
-                                                      autoValidate: true,
-                                                    );
+                                                          [
+                                                            StockRecordEntryType
+                                                                .receipt,
+                                                          ].contains(entryType)
+                                                              ? [
+                                                                  Validators
+                                                                      .required,
+                                                                  Validators
+                                                                      .minLength(
+                                                                          2),
+                                                                  Validators
+                                                                      .maxLength(
+                                                                          200)
+                                                                ]
+                                                              : [],
+                                                          updateParent: true,
+                                                          autoValidate: true,
+                                                        );
 
                                                     form
                                                         .control(
@@ -1372,13 +1446,28 @@ class CustomStockDetailsPageState
                                                           true;
                                                       form
                                                           .control(
-                                                        _driverNameKey,
-                                                      )
+                                                            _driverNameKey,
+                                                          )
                                                           .setValidators(
-                                                        [],
-                                                        updateParent: true,
-                                                        autoValidate: true,
-                                                      );
+                                                            [
+                                                              StockRecordEntryType
+                                                                  .receipt,
+                                                            ].contains(
+                                                                    entryType)
+                                                                ? [
+                                                                    Validators
+                                                                        .required,
+                                                                    Validators
+                                                                        .minLength(
+                                                                            2),
+                                                                    Validators
+                                                                        .maxLength(
+                                                                            200)
+                                                                  ]
+                                                                : [],
+                                                            updateParent: true,
+                                                            autoValidate: true,
+                                                          );
 
                                                       form
                                                           .control(
@@ -1431,18 +1520,30 @@ class CustomStockDetailsPageState
                                                       if (isWareHouseMgr) {
                                                         form
                                                             .control(
-                                                          _driverNameKey,
-                                                        )
+                                                              _driverNameKey,
+                                                            )
                                                             .setValidators(
-                                                          [
-                                                            Validators
-                                                                .minLength(2),
-                                                            Validators
-                                                                .maxLength(200),
-                                                          ],
-                                                          updateParent: true,
-                                                          autoValidate: true,
-                                                        );
+                                                              [
+                                                                StockRecordEntryType
+                                                                    .receipt,
+                                                              ].contains(
+                                                                      entryType)
+                                                                  ? [
+                                                                      Validators
+                                                                          .required,
+                                                                      Validators
+                                                                          .minLength(
+                                                                              2),
+                                                                      Validators
+                                                                          .maxLength(
+                                                                              200)
+                                                                    ]
+                                                                  : [],
+                                                              updateParent:
+                                                                  true,
+                                                              autoValidate:
+                                                                  true,
+                                                            );
 
                                                         form
                                                             .control(
@@ -1845,7 +1946,13 @@ class CustomStockDetailsPageState
                                       i18_local.stockDetailsReceiptShowcase
                                           .driverName,
                                     ),
+                                    isRequired: true,
                                     formControlName: _driverNameKey,
+                                    onChanged: (value) {
+                                      form.control(_driverNameKey).value =
+                                          value.value;
+                                      setState(() {});
+                                    },
                                     validationMessages: {
                                       'required': (object) =>
                                           localizations.translate(
@@ -2093,9 +2200,8 @@ class CustomStockDetailsPageState
                                           ),
                                           ...scannedResources.map((e) => Align(
                                                 alignment: Alignment.centerLeft,
-                                                child: Text(e
-                                                    .elements.values.first.data
-                                                    .toString()),
+                                                child:
+                                                    Text(gs1Decoder(e) ?? ""),
                                               ))
                                         ]),
 
@@ -2262,11 +2368,13 @@ class CustomStockDetailsPageState
       BarcodeScanType barcodeScanType = element.$1;
       for (var e in element.$2.elements.entries) {
         String key = e.key.toString();
-        if (barcodeScanType == BarcodeScanType.manual) {
-          key = "manual_${e.key}";
+        if (key == "00" || key == "21") {
+          if (barcodeScanType == BarcodeScanType.manual) {
+            key = "manual_${e.key}";
+          }
+          keys.add(key);
+          values.add(e.value.data.toString());
         }
-        keys.add(key);
-        values.add(e.value.data.toString());
       }
       additionalFields.add(AdditionalField(keys.join('|'), values.join('|')));
     }

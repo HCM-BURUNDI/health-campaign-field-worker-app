@@ -14,6 +14,8 @@ import 'package:inventory_management/models/entities/stock_reconciliation.dart';
 import 'package:inventory_management/models/entities/transaction_reason.dart';
 import 'package:inventory_management/models/entities/transaction_type.dart';
 
+import '../../../data/local/inventory_management/custom_stock.dart';
+
 typedef InventoryReportEmitter = Emitter<InventoryReportState>;
 
 class CustomInventoryReportBloc
@@ -86,7 +88,8 @@ class CustomInventoryReportBloc
         senderId = facilityId;
       }
       final data = (receiverId != null
-              ? await stockRepository.search(
+              ? await (stockRepository as CustomStockLocalRepository)
+                  .customSearch(
                   StockSearchModel(
                     transactionType: transactionType,
                     tenantId: InventorySingleton().tenantId,
@@ -95,7 +98,8 @@ class CustomInventoryReportBloc
                     transactionReason: transactionReason,
                   ),
                 )
-              : await stockRepository.search(
+              : await (stockRepository as CustomStockLocalRepository)
+                  .customSearch(
                   StockSearchModel(
                     transactionType: transactionType,
                     tenantId: InventorySingleton().tenantId,

@@ -304,38 +304,11 @@ class CustomDeliverInterventionPageState
                                                                 List<AdditionalField>
                                                                     codeAdditionalFields =
                                                                     [];
-                                                                for (var element
-                                                                    in barcodes) {
-                                                                  List<String>
-                                                                      keys = [];
-                                                                  List<String>
-                                                                      values =
-                                                                      [];
-                                                                  for (var e in element
-                                                                      .elements
-                                                                      .entries) {
-                                                                    e.value
-                                                                        .rawData;
-                                                                    keys.add(
-                                                                      e.key
-                                                                          .toString(),
-                                                                    );
-                                                                    values.add(
-                                                                      e.value
-                                                                          .data
-                                                                          .toString(),
-                                                                    );
-                                                                  }
-                                                                  codeAdditionalFields
-                                                                      .add(
-                                                                    AdditionalField(
-                                                                      keys.join(
-                                                                          '|'),
-                                                                      values.join(
-                                                                          '|'),
-                                                                    ),
-                                                                  );
-                                                                }
+
+                                                                codeAdditionalFields.addAll(
+                                                                    addBarCodesToFields(
+                                                                        scannerState
+                                                                            .barCodes));
 
                                                                 final deliveredProducts =
                                                                     ((form.control(_resourceDeliveredKey)
@@ -1003,6 +976,20 @@ class CustomDeliverInterventionPageState
     return task;
   }
 
+  //return bedCount
+  int getBedCount(HouseholdMemberWrapper householdMemberWrapper) {
+    final household = householdMemberWrapper.household;
+    final additionalFields = household?.additionalFields?.fields;
+
+    if (additionalFields == null) return 1;
+
+    final bedField = additionalFields.firstWhereOrNull(
+      (field) => field.key == 'bedCount',
+    );
+
+    return int.tryParse(bedField?.value ?? '1') ?? 1;
+  }
+
   dynamic getBednetCount(HouseholdMemberWrapper householdMemberWrapper) {
     // Early return if the householdMemberWrapper or household is null
     final household = householdMemberWrapper.household;
@@ -1040,7 +1027,8 @@ class CustomDeliverInterventionPageState
       if (communityValue == CommunityTypes.refugeeCamps.toValue()) {
         return (memberCount / 2).round();
       } else if (communityValue == CommunityTypes.specialGroups.toValue()) {
-        return memberCount;
+        final bedCount = getBedCount(householdMemberWrapper);
+        return bedCount;
       }
     }
 
@@ -1143,5 +1131,27 @@ class CustomDeliverInterventionPageState
         ),
       ]),
     });
+  }
+
+  List<AdditionalField> addBarCodesToFields(
+      List<(BarcodeScanType, GS1Barcode)> barCodes) {
+    List<AdditionalField> additionalFields = [];
+    for (var element in barCodes) {
+      List<String> keys = [];
+      List<String> values = [];
+      BarcodeScanType barcodeScanType = element.$1;
+      for (var e in element.$2.elements.entries) {
+        String key = e.key.toString();
+        if (key == "00" || key == "21") {
+          if (barcodeScanType == BarcodeScanType.manual) {
+            key = "manual_${e.key}";
+          }
+          keys.add(key);
+          values.add(e.value.data.toString());
+        }
+      }
+      additionalFields.add(AdditionalField(keys.join('|'), values.join('|')));
+    }
+    return additionalFields;
   }
 }
