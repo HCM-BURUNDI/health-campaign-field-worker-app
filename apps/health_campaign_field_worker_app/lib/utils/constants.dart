@@ -81,6 +81,9 @@ class Constants {
   static const String curlyBraces = '{}';
   static const String smallBraces = '()';
   static const String intTwo = '2';
+  static const String intTwentyOne = '21';
+  static const String manualTwentyOne = 'manual_21';
+  static const String or = '|';
   static const String comma = ',';
   static const String pipeSeparator = ' || ';
   static const String bednetDistributed = 'BednetDistributed';
