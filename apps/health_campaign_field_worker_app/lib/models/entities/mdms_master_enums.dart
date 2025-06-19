@@ -39,6 +39,8 @@ enum MasterEnums {
   genderType,
   @MappableValue("ROW_VERSIONS")
   rowVersion,
+  @MappableValue("SEARCH_HOUSEHOLD_FILTERS")
+  searchHouseHoldFilters,
   @MappableValue("ServiceDefs")
   serviceDefinitions,
   @MappableValue("SEARCH_CLF_FILTERS")
