@@ -29,10 +29,12 @@ import '../../utils/constants.dart';
 @RoutePage()
 class CustomHouseHoldDetailsPage extends LocalizedStatefulWidget {
   final String? refugeeCamp;
+  final int? registrationDate;
   const CustomHouseHoldDetailsPage({
     super.key,
     required this.refugeeCamp,
     super.appLocalizations,
+    this.registrationDate,
   });
 
   @override
@@ -61,6 +63,12 @@ class CustomHouseHoldDetailsPageState
                 e.key == Constants.communityKey));
       }
       if (field == null && widget.refugeeCamp != null) {
+        return [
+          AdditionalField(Constants.refugeeCamp, widget.refugeeCamp),
+          AdditionalField(
+              Constants.communityKey, CommunityTypes.refugeeCamps.toValue())
+        ];
+      } else if (field != null && widget.refugeeCamp != null) {
         return [
           AdditionalField(Constants.refugeeCamp, widget.refugeeCamp),
           AdditionalField(
@@ -273,7 +281,10 @@ class CustomHouseHoldDetailsPageState
                                                     .toValue() &&
                                             e.key !=
                                                 AdditionalFieldsType.children
-                                                    .toValue()),
+                                                    .toValue() &&
+                                            e.key != Constants.communityKey &&
+                                            e.key != Constants.refugeeCamp),
+                                    ...addAdditionalField(householdModel)
                                   ]));
 
                           bloc.add(
@@ -321,6 +332,9 @@ class CustomHouseHoldDetailsPageState
                                     : null,
                               ),
                             ),
+                          );
+                          context.router.push(
+                            CustomHouseholdOverviewRoute(),
                           );
                         },
                       );
@@ -407,18 +421,15 @@ class CustomHouseHoldDetailsPageState
       return value.householdModel;
     }, create: (value) {
       return value.householdModel;
+    }, persisted: (value) {
+      return value.householdModel;
     });
 
-    final registrationDate = state.mapOrNull(
-      editHousehold: (value) {
-        return value.registrationDate;
-      },
-      create: (value) => DateTime.now(),
-    );
-
     return fb.group(<String, Object>{
-      _dateOfRegistrationKey:
-          FormControl<DateTime>(value: registrationDate, validators: []),
+      _dateOfRegistrationKey: FormControl<DateTime>(
+          value: DateTime.fromMillisecondsSinceEpoch(
+              widget.registrationDate ?? DateTime.now().millisecondsSinceEpoch),
+          validators: []),
       _memberCountKey: FormControl<int>(
         value: household?.memberCount ?? 1,
       ),
