@@ -49,7 +49,6 @@ class _CustomEumerationSummaryReportDetailsState
 
   static const _householdKey = 'householdKey';
   static const _projectBeneficiaryKey = 'projectBeneficiaryKey';
-  static const _closedHouseholdKey = 'closedHouseholdKey';
   static const _closedHouseholdAbsentKey = 'closedHouseholdAbsentKey';
   static const _closedHouseholdRefusedKey = 'closedHouseholdRefusedKey';
 
@@ -146,17 +145,6 @@ class _CustomEumerationSummaryReportDetailsState
                             DigitGridColumn(
                               label: localizations.translate(i18Local
                                   .inventoryReportDetails
-                                  .closedHouseholdRegisteredLabel),
-                              key: _closedHouseholdKey,
-                              width: localizations
-                                      .translate(i18Local.inventoryReportDetails
-                                          .closedHouseholdRegisteredLabel)
-                                      .length *
-                                  9,
-                            ),
-                            DigitGridColumn(
-                              label: localizations.translate(i18Local
-                                  .inventoryReportDetails
                                   .closedHouseholdRegisteredAbsentLabel),
                               key: _closedHouseholdAbsentKey,
                               width: localizations
@@ -199,14 +187,6 @@ class _CustomEumerationSummaryReportDetailsState
                                                 Constants.projectBeneficiary] ??
                                             0)
                                         .toString(),
-                                  ),
-                                  DigitGridCell(
-                                    key: _closedHouseholdKey,
-                                    value: (entry.value[Constants
-                                                    .closedHousehold] ??
-                                                0)
-                                            .toString() ??
-                                        "0",
                                   ),
                                   DigitGridCell(
                                     key: _closedHouseholdAbsentKey,
