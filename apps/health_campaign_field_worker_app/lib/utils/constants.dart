@@ -89,11 +89,14 @@ class Constants {
   static const String closedHousehold = 'ClosedHousehold';
   static const String closedHouseholdAbsent = 'ClosedHouseholdAbsent';
   static const String closedHouseholdRefused = 'ClosedHouseholdRefused';
+  static const String stringYes = 'Yes';
+  static const String stringNo = 'No';
 
   static RegExp mobileNumberRegExp =
       RegExp(r'^(?=.{10}$)[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$');
   // same key would be used to set community type like refugee or special groups etc
   static const String refugeeCamp = "refugeeCamp";
+  static const String refugee_camps = 'refugee_camps';
   static const String communityKey = 'communityKey';
   static const String householdTypeKey = 'householdTypeKey';
 
