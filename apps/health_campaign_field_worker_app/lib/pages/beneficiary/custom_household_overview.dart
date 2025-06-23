@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
+import 'package:digit_components/widgets/digit_elevated_button.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_data_model/models/entities/household_type.dart';
 import 'package:digit_ui_components/enum/app_enums.dart';
@@ -335,6 +336,75 @@ class _HouseholdOverviewPageState
                                                   )
                                               },
                                             ),
+                                            if ((state.householdMemberWrapper
+                                                        .projectBeneficiaries ??
+                                                    [])
+                                                .isNotEmpty)
+                                              DigitElevatedButton(
+                                                  onPressed: () async {
+                                                    HouseholdMemberWrapper
+                                                        wrapper = state
+                                                            .householdMemberWrapper;
+
+                                                    final timestamp = wrapper
+                                                        .household
+                                                        ?.clientAuditDetails
+                                                        ?.createdTime;
+                                                    final date = DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                      timestamp ??
+                                                          DateTime.now()
+                                                              .millisecondsSinceEpoch,
+                                                    );
+
+                                                    final address = wrapper
+                                                        .household?.address;
+
+                                                    if (address == null) return;
+
+                                                    final projectBeneficiary = state
+                                                        .householdMemberWrapper
+                                                        .projectBeneficiaries
+                                                        ?.firstWhereOrNull(
+                                                      (element) =>
+                                                          element
+                                                              .beneficiaryClientReferenceId ==
+                                                          wrapper.household
+                                                              ?.clientReferenceId,
+                                                    );
+
+                                                    await context.router.root
+                                                        .push(
+                                                      BeneficiaryRegistrationWrapperRoute(
+                                                        initialState:
+                                                            BeneficiaryRegistrationEditHouseholdState(
+                                                          addressModel: address,
+                                                          individualModel: state
+                                                                  .householdMemberWrapper
+                                                                  .members ??
+                                                              [],
+                                                          householdModel: state
+                                                              .householdMemberWrapper
+                                                              .household!,
+                                                          registrationDate:
+                                                              date,
+                                                          projectBeneficiaryModel:
+                                                              projectBeneficiary,
+                                                        ),
+                                                        children: [
+                                                          HouseholdLocationRoute(),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Center(
+                                                    child: Text(
+                                                      localizations.translate(
+                                                        i18.householdOverView
+                                                            .householdOverViewEditIconText,
+                                                      ),
+                                                    ),
+                                                  ))
                                           ],
                                         );
                                       }),
