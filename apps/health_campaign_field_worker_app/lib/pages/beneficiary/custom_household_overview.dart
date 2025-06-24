@@ -337,9 +337,10 @@ class _HouseholdOverviewPageState
                                               },
                                             ),
                                             if ((state.householdMemberWrapper
-                                                        .projectBeneficiaries ??
-                                                    [])
-                                                .isNotEmpty)
+                                                            .projectBeneficiaries ??
+                                                        [])
+                                                    .isNotEmpty &&
+                                                context.isRegistrar)
                                               DigitElevatedButton(
                                                   onPressed: () async {
                                                     HouseholdMemberWrapper
