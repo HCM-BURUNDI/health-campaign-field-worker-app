@@ -426,6 +426,8 @@ class _HomePageState extends LocalizedState<HomePage> {
           customIconSize: 48, //add in constants foe closed households
           label: i18.home.closedHouseHoldLabel,
           onPressed: () async {
+            RegistrationDeliverySingleton()
+                .setHouseholdType(HouseholdType.family);
             await context.router.push(const ClosedHouseholdWrapperRoute());
           },
         ),

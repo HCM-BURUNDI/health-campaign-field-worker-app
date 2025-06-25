@@ -10,6 +10,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/blocs/household_overview/household_overview.dart';
 import 'package:registration_delivery/blocs/search_households/search_households.dart';
 import 'package:registration_delivery/models/entities/additional_fields_type.dart';
+import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/utils/extensions/extensions.dart';
 
 import 'package:registration_delivery/blocs/beneficiary_registration/beneficiary_registration.dart';
@@ -22,9 +23,13 @@ import 'package:registration_delivery/widgets/localized.dart';
 import 'package:registration_delivery/widgets/showcase/config/showcase_constants.dart';
 import 'package:registration_delivery/widgets/showcase/showcase_button.dart';
 
+import '../../data/repositories/local/custom_task.dart';
 import '../../models/entities/community_types.dart';
+import '../../models/entities/status.dart';
 import '../../router/app_router.dart';
 import '../../utils/constants.dart';
+
+import '../../utils/utils.dart' show checkIfClosedHousehold;
 
 @RoutePage()
 class CustomHouseHoldDetailsPage extends LocalizedStatefulWidget {
@@ -46,6 +51,7 @@ class CustomHouseHoldDetailsPageState
     extends LocalizedState<CustomHouseHoldDetailsPage> {
   static const _dateOfRegistrationKey = 'dateOfRegistration';
   static const _memberCountKey = 'memberCount';
+  bool isClosedHousehold = false;
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +93,8 @@ class CustomHouseHoldDetailsPageState
               BeneficiaryRegistrationState>(
             listener: (context, state) {
               if (state is BeneficiaryRegistrationPersistedState &&
-                  state.isEdit) {
+                  state.isEdit &&
+                  !isClosedHousehold) {
                 final overviewBloc = context.read<HouseholdOverviewBloc>();
 
                 overviewBloc.add(
@@ -244,7 +251,18 @@ class CustomHouseHoldDetailsPageState
                           projectBeneficiaryModel,
                           loading,
                           isHeadOfHousehold,
-                        ) {
+                        ) async {
+                          final isClosedHouseholdAdditionalField =
+                              householdModel.additionalFields?.fields
+                                  .where((e) => e.key == Constants.statusKey)
+                                  .firstOrNull;
+                          isClosedHousehold =
+                              isClosedHouseholdAdditionalField != null
+                                  ? isClosedHouseholdAdditionalField.value ==
+                                          Status.closeHousehold.toValue()
+                                      ? true
+                                      : false
+                                  : false;
                           var household = householdModel.copyWith(
                               memberCount: memberCount,
                               address: addressModel,
@@ -283,10 +301,16 @@ class CustomHouseHoldDetailsPageState
                                                 AdditionalFieldsType.children
                                                     .toValue() &&
                                             e.key != Constants.communityKey &&
-                                            e.key != Constants.refugeeCamp),
+                                            e.key != Constants.refugeeCamp &&
+                                            e.key !=
+                                                Constants
+                                                    .isClosedHouseholdEdit),
+                                    if (isClosedHousehold)
+                                      const AdditionalField(
+                                          Constants.isClosedHouseholdEdit,
+                                          true),
                                     ...addAdditionalField(householdModel)
                                   ]));
-
                           bloc.add(
                             BeneficiaryRegistrationUpdateHouseholdDetailsEvent(
                               household: household.copyWith(
@@ -331,11 +355,31 @@ class CustomHouseHoldDetailsPageState
                                       )
                                     : null,
                               ),
+                              tag: projectBeneficiaryModel?.tag ?? '',
                             ),
                           );
-                          context.router.push(
-                            CustomHouseholdOverviewRoute(),
-                          );
+                          if (isClosedHousehold && individuals.isNotEmpty) {
+                            await context.router.root.push(
+                              BeneficiaryRegistrationWrapperRoute(
+                                initialState:
+                                    BeneficiaryRegistrationEditIndividualState(
+                                        individualModel: individuals.first,
+                                        householdModel: household,
+                                        addressModel: addressModel,
+                                        projectBeneficiaryModel:
+                                            projectBeneficiaryModel),
+                                children: [
+                                  CustomIndividualDetailsRoute(
+                                    isHeadOfHousehold: true,
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            context.router.push(
+                              CustomHouseholdOverviewRoute(),
+                            );
+                          }
                         },
                       );
                     },
@@ -417,13 +461,14 @@ class CustomHouseHoldDetailsPageState
   }
 
   FormGroup buildForm(BeneficiaryRegistrationState state) {
-    final household = state.mapOrNull(editHousehold: (value) {
-      return value.householdModel;
-    }, create: (value) {
-      return value.householdModel;
-    }, persisted: (value) {
-      return value.householdModel;
-    });
+    final household = state.mapOrNull(
+      editHousehold: (value) {
+        return value.householdModel;
+      },
+      create: (value) {
+        return value.householdModel;
+      },
+    );
 
     return fb.group(<String, Object>{
       _dateOfRegistrationKey: FormControl<DateTime>(
