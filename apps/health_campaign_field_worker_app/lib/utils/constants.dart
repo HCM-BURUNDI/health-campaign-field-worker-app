@@ -91,6 +91,8 @@ class Constants {
   static const String closedHouseholdRefused = 'ClosedHouseholdRefused';
   static const String stringYes = 'Yes';
   static const String stringNo = 'No';
+  static const String statusKey = 'status';
+  static const String isClosedHouseholdEdit = 'isClosedHouseholdEdit';
 
   static RegExp mobileNumberRegExp =
       RegExp(r'^(?=.{10}$)[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$');
