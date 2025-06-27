@@ -355,7 +355,6 @@ class CustomHouseHoldDetailsPageState
                                       )
                                     : null,
                               ),
-                              tag: projectBeneficiaryModel?.tag ?? '',
                             ),
                           );
                           if (isClosedHousehold && individuals.isNotEmpty) {
