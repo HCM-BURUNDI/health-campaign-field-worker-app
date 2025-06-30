@@ -348,18 +348,16 @@ class CustomViewBeneficiaryCardState
               Flexible(
                 child: (projectBeneficiary == null)
                     ? const Offstage()
-                    : context.isRegistrar
-                        ? DigitOutLineButton(
-                            buttonStyle: OutlinedButton.styleFrom(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
-                              ),
-                            ),
-                            label: localizations
-                                .translate(i18.searchBeneficiary.iconLabel),
-                            onPressed: widget.onOpenPressed,
-                          )
-                        : const Offstage(),
+                    : DigitOutLineButton(
+                        buttonStyle: OutlinedButton.styleFrom(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                        ),
+                        label: localizations
+                            .translate(i18.searchBeneficiary.iconLabel),
+                        onPressed: widget.onOpenPressed,
+                      ),
               ),
             ],
           ),
