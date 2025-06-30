@@ -908,6 +908,7 @@ class CustomDeliverInterventionPageState
     HouseholdMemberWrapper? householdMemberWrapper,
   }) {
     // Initialize task with oldTask if available, or create a new one
+    var userId = RegistrationDeliverySingleton().loggedInUserUuid;
     var task = oldTask;
     var clientReferenceId = task?.clientReferenceId ?? IdGen.i.identifier;
     task ??= TaskModel(
@@ -921,12 +922,22 @@ class CustomDeliverInterventionPageState
       auditDetails: AuditDetails(
         createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
         createdTime: context.millisecondsSinceEpoch(),
+        lastModifiedBy: RegistrationDeliverySingleton().loggedInUserUuid!,
+        lastModifiedTime: context.millisecondsSinceEpoch(),
       ),
       clientAuditDetails: ClientAuditDetails(
-        createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
-        createdTime: context.millisecondsSinceEpoch(),
-      ),
+          createdBy: RegistrationDeliverySingleton().loggedInUserUuid!,
+          createdTime: context.millisecondsSinceEpoch(),
+          lastModifiedBy: RegistrationDeliverySingleton().loggedInUserUuid!,
+          lastModifiedTime: context.millisecondsSinceEpoch()),
     );
+    task = task.copyWith(
+        auditDetails: task.auditDetails?.copyWith(
+            lastModifiedBy: RegistrationDeliverySingleton().loggedInUserUuid!,
+            lastModifiedTime: context.millisecondsSinceEpoch()),
+        clientAuditDetails: task.clientAuditDetails?.copyWith(
+            lastModifiedBy: RegistrationDeliverySingleton().loggedInUserUuid!,
+            lastModifiedTime: context.millisecondsSinceEpoch()));
 
     // get the householdType and communityType
     final householdType = householdMemberWrapper?.household?.householdType;
