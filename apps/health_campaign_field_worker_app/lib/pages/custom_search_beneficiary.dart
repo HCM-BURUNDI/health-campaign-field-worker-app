@@ -333,31 +333,37 @@ class _CustomSearchBeneficiaryPageStateState
                                     selectedFilters = [];
                                   });
                                   blocWrapper.clearEvent();
-                                  await context.router.push(
-                                    BeneficiaryRegistrationWrapperRoute(
-                                      initialState: BeneficiaryRegistrationState
-                                          .editHousehold(
-                                              householdModel: i.household!,
-                                              individualModel: i.members!,
-                                              registrationDate: DateTime.now(),
-                                              projectBeneficiaryModel:
-                                                  (i.projectBeneficiaries ?? [])
-                                                          .isNotEmpty
-                                                      ? i.projectBeneficiaries
-                                                          ?.lastOrNull
-                                                      : null,
-                                              addressModel:
-                                                  (RegistrationDeliverySingleton()
-                                                              .householdType ==
-                                                          HouseholdType
-                                                              .community)
-                                                      ? i.household!.address!
-                                                      : i.headOfHousehold!
-                                                          .address!.lastOrNull!,
-                                              headOfHousehold:
-                                                  i.headOfHousehold),
-                                    ),
-                                  );
+                                  if (context.isRegistrar) {
+                                    await context.router.push(
+                                      BeneficiaryRegistrationWrapperRoute(
+                                        initialState: BeneficiaryRegistrationState
+                                            .editHousehold(
+                                                householdModel: i.household!,
+                                                individualModel: i.members!,
+                                                registrationDate:
+                                                    DateTime.now(),
+                                                projectBeneficiaryModel:
+                                                    (i.projectBeneficiaries ??
+                                                                [])
+                                                            .isNotEmpty
+                                                        ? i.projectBeneficiaries
+                                                            ?.lastOrNull
+                                                        : null,
+                                                addressModel:
+                                                    (RegistrationDeliverySingleton()
+                                                                .householdType ==
+                                                            HouseholdType
+                                                                .community)
+                                                        ? i.household!.address!
+                                                        : i
+                                                            .headOfHousehold!
+                                                            .address!
+                                                            .lastOrNull!,
+                                                headOfHousehold:
+                                                    i.headOfHousehold),
+                                      ),
+                                    );
+                                  }
                                 } else {
                                   await context.router.push(
                                     BeneficiaryWrapperRoute(
