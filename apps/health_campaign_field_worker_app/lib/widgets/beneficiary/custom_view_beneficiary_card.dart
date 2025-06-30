@@ -19,6 +19,7 @@ import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/beneficiary/beneficiary_card.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 
+import '../../models/auth/auth_model.dart';
 import '../../utils/utils.dart' as utilsLocal;
 
 class CustomViewBeneficiaryCard extends LocalizedStatefulWidget {
@@ -347,16 +348,18 @@ class CustomViewBeneficiaryCardState
               Flexible(
                 child: (projectBeneficiary == null)
                     ? const Offstage()
-                    : DigitOutLineButton(
-                        buttonStyle: OutlinedButton.styleFrom(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                          ),
-                        ),
-                        label: localizations
-                            .translate(i18.searchBeneficiary.iconLabel),
-                        onPressed: widget.onOpenPressed,
-                      ),
+                    : context.isRegistrar
+                        ? DigitOutLineButton(
+                            buttonStyle: OutlinedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                              ),
+                            ),
+                            label: localizations
+                                .translate(i18.searchBeneficiary.iconLabel),
+                            onPressed: widget.onOpenPressed,
+                          )
+                        : const Offstage(),
               ),
             ],
           ),
