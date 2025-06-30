@@ -19,6 +19,7 @@ import 'package:registration_delivery/utils/utils.dart';
 import 'package:registration_delivery/widgets/beneficiary/beneficiary_card.dart';
 import 'package:registration_delivery/widgets/localized.dart';
 
+import '../../models/auth/auth_model.dart';
 import '../../utils/utils.dart' as utilsLocal;
 
 class CustomViewBeneficiaryCard extends LocalizedStatefulWidget {

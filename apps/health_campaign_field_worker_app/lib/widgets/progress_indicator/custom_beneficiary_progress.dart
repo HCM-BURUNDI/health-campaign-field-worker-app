@@ -96,13 +96,12 @@ class CustomBeneficiaryProgressBarState
 
           TaskSearchModel taskSearchQuery = TaskSearchModel(
             status: Status.administeredSuccess.toValue(),
-            createdBy: loggedInUserUuid,
             plannedEndDate: lte.millisecondsSinceEpoch,
             plannedStartDate: gte.millisecondsSinceEpoch,
             projectId: projectId,
           );
-          List<TaskModel> results =
-              await repository.progressBarSearch(taskSearchQuery);
+          List<TaskModel> results = await repository.progressBarSearch(
+              taskSearchQuery, loggedInUserUuid);
 
           if (mounted) {
             setState(() {
