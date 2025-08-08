@@ -44,6 +44,7 @@ class CheckDuplicateQrCodeBloc
             .additionalFields?.fields
             .where((e) =>
                 e.key == Constants.intTwentyOne ||
+                e.key == Constants.intZeroZero ||
                 e.key == Constants.manualTwentyOne)
             ?.toList();
         for (AdditionalField field in additionalFieldTask ?? []) {
@@ -51,19 +52,26 @@ class CheckDuplicateQrCodeBloc
           List<String> fieldValue = field.value.toString().split(Constants.or);
           if (filedKey.length != fieldValue.length &&
               !(filedKey.contains(Constants.intTwentyOne) ||
+                  filedKey.contains(Constants.intZeroZero) ||
                   filedKey.contains(Constants.manualTwentyOne))) continue;
           Map<String, String> mapKeyValue = {};
           for (int i = 0; i < filedKey.length; i++) {
             mapKeyValue[filedKey[i]] = fieldValue[i];
           }
           // String qrCode = field.value;
-          String? qrCode = mapKeyValue[Constants.intTwentyOne];
+          String? qrCode = mapKeyValue[Constants.intZeroZero];
+
           if (qrCode != null) {
             existingQrCodes.add(qrCode);
           } else {
-            qrCode = mapKeyValue[Constants.manualTwentyOne];
+            qrCode = mapKeyValue[Constants.intTwentyOne];
             if (qrCode != null) {
               existingQrCodes.add(qrCode);
+            } else {
+              qrCode = mapKeyValue[Constants.manualTwentyOne];
+              if (qrCode != null) {
+                existingQrCodes.add(qrCode);
+              }
             }
           }
         }
@@ -71,7 +79,8 @@ class CheckDuplicateQrCodeBloc
       List<String> duplicateQrCodes = [];
       for (GS1Barcode barcode in event.barcodes) {
         for (var element in barcode.elements.entries) {
-          if (element.key == Constants.intTwentyOne) {
+          if (element.key == Constants.intTwentyOne ||
+              element.key == Constants.intZeroZero) {
             String qrValue = element.value.data.toString();
             if (existingQrCodes.contains(qrValue)) {
               duplicateQrCodes.add(qrValue);
