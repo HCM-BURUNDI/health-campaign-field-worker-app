@@ -82,6 +82,7 @@ class Constants {
   static const String smallBraces = '()';
   static const String intTwo = '2';
   static const String intTwentyOne = '21';
+  static const String intZeroZero = '00';
   static const String manualTwentyOne = 'manual_21';
   static const String or = '|';
   static const String comma = ',';
