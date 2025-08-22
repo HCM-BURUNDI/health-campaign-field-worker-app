@@ -108,6 +108,9 @@ class DeliverIntervention {
   String get informationBulletFour => 'INFORMATION_BULLET_FOUR';
   String get scanValidResource => 'SCAN_VALID_RESOURCE';
   String get resourceAlreadyScanned => 'RESOURCES_ALREADY_SCANNED';
+  String get duplicateQrTitle => 'DUPLICATE_QR_TITLE';
+  String get duplicateQrMessage => 'DUPLICATE_QR_MESSAGE';
+  String get duplicateQrCodesAre => 'DUPLICATE_QR_CODES_ARE';
 }
 
 class Common {

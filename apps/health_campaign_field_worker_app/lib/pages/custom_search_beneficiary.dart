@@ -152,30 +152,22 @@ class _CustomSearchBeneficiaryPageStateState
                                   }
                                 },
                               ),
-                              RegistrationDeliverySingleton()
-                                              .searchHouseHoldFilter !=
-                                          null &&
-                                      RegistrationDeliverySingleton()
-                                          .searchHouseHoldFilter!
-                                          .isNotEmpty &&
-                                      RegistrationDeliverySingleton()
-                                              .householdType !=
-                                          HouseholdType.community
-                                  ? Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: kPadding),
-                                        child: DigitIconButton(
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: kPadding),
+                                  child: (context.isRegistrar)
+                                      ? DigitIconButton(
                                           textDirection: TextDirection.rtl,
                                           iconText:
                                               getFilterIconNLabel()['label'],
                                           icon: getFilterIconNLabel()['icon'],
                                           onPressed: () => showFilterDialog(),
-                                        ),
-                                      ),
-                                    )
-                                  : const Offstage(),
+                                        )
+                                      : Offstage(),
+                                ),
+                              ),
                               selectedFilters.isNotEmpty
                                   ? Align(
                                       alignment: Alignment.topLeft,
@@ -344,31 +336,37 @@ class _CustomSearchBeneficiaryPageStateState
                                     selectedFilters = [];
                                   });
                                   blocWrapper.clearEvent();
-                                  await context.router.push(
-                                    BeneficiaryRegistrationWrapperRoute(
-                                      initialState: BeneficiaryRegistrationState
-                                          .editHousehold(
-                                              householdModel: i.household!,
-                                              individualModel: i.members!,
-                                              registrationDate: DateTime.now(),
-                                              projectBeneficiaryModel:
-                                                  (i.projectBeneficiaries ?? [])
-                                                          .isNotEmpty
-                                                      ? i.projectBeneficiaries
-                                                          ?.lastOrNull
-                                                      : null,
-                                              addressModel:
-                                                  (RegistrationDeliverySingleton()
-                                                              .householdType ==
-                                                          HouseholdType
-                                                              .community)
-                                                      ? i.household!.address!
-                                                      : i.headOfHousehold!
-                                                          .address!.lastOrNull!,
-                                              headOfHousehold:
-                                                  i.headOfHousehold),
-                                    ),
-                                  );
+                                  if (context.isRegistrar) {
+                                    await context.router.push(
+                                      BeneficiaryRegistrationWrapperRoute(
+                                        initialState: BeneficiaryRegistrationState
+                                            .editHousehold(
+                                                householdModel: i.household!,
+                                                individualModel: i.members!,
+                                                registrationDate:
+                                                    DateTime.now(),
+                                                projectBeneficiaryModel:
+                                                    (i.projectBeneficiaries ??
+                                                                [])
+                                                            .isNotEmpty
+                                                        ? i.projectBeneficiaries
+                                                            ?.lastOrNull
+                                                        : null,
+                                                addressModel:
+                                                    (RegistrationDeliverySingleton()
+                                                                .householdType ==
+                                                            HouseholdType
+                                                                .community)
+                                                        ? i.household!.address!
+                                                        : i
+                                                            .headOfHousehold!
+                                                            .address!
+                                                            .lastOrNull!,
+                                                headOfHousehold:
+                                                    i.headOfHousehold),
+                                      ),
+                                    );
+                                  }
                                 } else {
                                   await context.router.push(
                                     BeneficiaryWrapperRoute(
@@ -534,7 +532,6 @@ class _CustomSearchBeneficiaryPageStateState
                 globalSearchParams: GlobalSearchParameters(
           isProximityEnabled: isProximityEnabled,
           latitude: lat,
-          projectId: RegistrationDeliverySingleton().projectId!,
           longitude: long,
           maxRadius: RegistrationDeliverySingleton().maxRadius,
           nameSearch: searchController.text.trim().length > 2
@@ -557,10 +554,10 @@ class _CustomSearchBeneficiaryPageStateState
         blocWrapper.houseHoldGlobalSearchBloc
             .add(SearchHouseholdsEvent.houseHoldGlobalSearch(
                 globalSearchParams: GlobalSearchParameters(
+          projectId: RegistrationDeliverySingleton().projectId,
           isProximityEnabled: isProximityEnabled,
           latitude: lat,
           longitude: long,
-          projectId: RegistrationDeliverySingleton().projectId!,
           maxRadius: RegistrationDeliverySingleton().maxRadius,
           nameSearch: searchController.text.trim().length > 2
               ? searchController.text.trim()

@@ -94,6 +94,7 @@ class AppInitializationBloc
                     MasterEnums.idTypes.toValue(),
                     MasterEnums.deliveryComments.toValue(),
                     MasterEnums.backendInterface.toValue(),
+                    MasterEnums.searchHouseHoldFilters.toValue(),
                     MasterEnums.callSupport.toValue(),
                     MasterEnums.transportTypes.toValue(),
                     MasterEnums.searchCLFFilters.toValue(),

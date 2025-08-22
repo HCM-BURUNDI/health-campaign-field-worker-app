@@ -66,6 +66,10 @@ class CustomIndividualDetailsPageState
     final router = context.router;
     final theme = Theme.of(context);
     DateTime before150Years = DateTime(now.year - 150, now.month, now.day);
+    final bool isEditIndividual = bloc.state.mapOrNull(
+          editIndividual: (_) => true,
+        ) ??
+        false;
 
     return Scaffold(
       body: ReactiveFormBuilder(
@@ -103,9 +107,10 @@ class CustomIndividualDetailsPageState
           builder: (context, state) {
             return ScrollableContent(
               enableFixedButton: true,
-              header: const Column(children: [
+              header: Column(children: [
                 BackNavigationHelpHeaderWidget(
                   showHelp: false,
+                  showBackNavigation: !isEditIndividual ?? true,
                 ),
               ]),
               footer: DigitCard(
@@ -248,7 +253,7 @@ class CustomIndividualDetailsPageState
                             addressModel,
                             projectBeneficiaryModel,
                             loading,
-                          ) {
+                          ) async {
                             final scannerBloc =
                                 context.read<CustomDigitScannerBloc>();
                             final individual = _getIndividualModel(
@@ -260,9 +265,15 @@ class CustomIndividualDetailsPageState
                                 ? scannerBloc.state.qrCodes.first
                                 : null;
 
-                            if (tag != null &&
-                                tag != projectBeneficiaryModel?.tag &&
-                                scannerBloc.state.duplicate) {
+                            final repository = context.read<
+                                    LocalRepository<ProjectBeneficiaryModel,
+                                        ProjectBeneficiarySearchModel>>()
+                                as ProjectBeneficiaryLocalRepository;
+                            final projectBeneficiary = await repository.search(
+                                ProjectBeneficiarySearchModel(
+                                    tag: [scannerBloc.state.qrCodes.first]));
+
+                            if (projectBeneficiary.isNotEmpty) {
                               DigitToast.show(
                                 context,
                                 options: DigitToastOptions(
@@ -274,6 +285,8 @@ class CustomIndividualDetailsPageState
                                   theme,
                                 ),
                               );
+
+                              return;
                             } else {
                               bloc.add(
                                 BeneficiaryRegistrationUpdateIndividualDetailsEvent(
