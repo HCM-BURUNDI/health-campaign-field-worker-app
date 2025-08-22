@@ -32,6 +32,8 @@ import 'package:attendance_management/widgets/back_navigation_help_header.dart';
 import 'package:attendance_management/widgets/circular_button.dart';
 import 'package:attendance_management/widgets/no_result_card.dart';
 
+import '../../router/app_router.dart';
+
 @RoutePage()
 class CustomMarkAttendancePage extends LocalizedStatefulWidget {
   final List<AttendeeModel> attendees;
@@ -615,7 +617,8 @@ class _CustomMarkAttendancePageState extends State<CustomMarkAttendancePage> {
         secondaryLabel:
             localizations.translate(i18.attendance.goToAttendanceRegisters),
         secondaryAction: () {
-          context.router.popUntilRouteWithName(ManageAttendanceRoute.name);
+          context.router
+              .popUntilRouteWithName(CustomManageAttendanceRoute.name);
         },
       ),
     );

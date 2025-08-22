@@ -209,6 +209,7 @@ abstract class _$AppRouter extends RootStackRouter {
           key: args.key,
           refugeeCamp: args.refugeeCamp,
           appLocalizations: args.appLocalizations,
+          registrationDate: args.registrationDate,
         ),
       );
     },
@@ -1195,6 +1196,7 @@ class CustomHouseHoldDetailsRoute
     Key? key,
     required String? refugeeCamp,
     RegistrationDeliveryLocalization? appLocalizations,
+    int? registrationDate,
     List<PageRouteInfo>? children,
   }) : super(
           CustomHouseHoldDetailsRoute.name,
@@ -1202,6 +1204,7 @@ class CustomHouseHoldDetailsRoute
             key: key,
             refugeeCamp: refugeeCamp,
             appLocalizations: appLocalizations,
+            registrationDate: registrationDate,
           ),
           initialChildren: children,
         );
@@ -1217,6 +1220,7 @@ class CustomHouseHoldDetailsRouteArgs {
     this.key,
     required this.refugeeCamp,
     this.appLocalizations,
+    this.registrationDate,
   });
 
   final Key? key;
@@ -1225,9 +1229,11 @@ class CustomHouseHoldDetailsRouteArgs {
 
   final RegistrationDeliveryLocalization? appLocalizations;
 
+  final int? registrationDate;
+
   @override
   String toString() {
-    return 'CustomHouseHoldDetailsRouteArgs{key: $key, refugeeCamp: $refugeeCamp, appLocalizations: $appLocalizations}';
+    return 'CustomHouseHoldDetailsRouteArgs{key: $key, refugeeCamp: $refugeeCamp, appLocalizations: $appLocalizations, registrationDate: $registrationDate}';
   }
 }
 

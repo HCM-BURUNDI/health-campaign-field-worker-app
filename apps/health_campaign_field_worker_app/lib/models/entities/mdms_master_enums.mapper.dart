@@ -59,6 +59,8 @@ class MasterEnumsMapper extends EnumMapper<MasterEnums> {
         return MasterEnums.genderType;
       case "ROW_VERSIONS":
         return MasterEnums.rowVersion;
+      case "SEARCH_HOUSEHOLD_FILTERS":
+        return MasterEnums.searchHouseHoldFilters;
       case "ServiceDefs":
         return MasterEnums.serviceDefinitions;
       case "SEARCH_CLF_FILTERS":
@@ -109,6 +111,8 @@ class MasterEnumsMapper extends EnumMapper<MasterEnums> {
         return "GenderType";
       case MasterEnums.rowVersion:
         return "ROW_VERSIONS";
+      case MasterEnums.searchHouseHoldFilters:
+        return "SEARCH_HOUSEHOLD_FILTERS";
       case MasterEnums.serviceDefinitions:
         return "ServiceDefs";
       case MasterEnums.searchCLFFilters:

@@ -15,6 +15,7 @@ import 'package:registration_delivery/models/entities/status.dart'
     as reg_status;
 import 'package:registration_delivery/models/entities/task.dart';
 import 'package:registration_delivery/utils/typedefs.dart';
+import 'package:registration_delivery/utils/utils.dart';
 
 import '../../utils/constants.dart';
 part 'closed_household.freezed.dart';
@@ -104,6 +105,7 @@ class ClosedHouseholdBloc
               ClosedHouseholdSingleton().loggedInUserUuid.toString(),
           lastModifiedTime: DateTime.now().millisecondsSinceEpoch,
         ),
+        householdType: RegistrationDeliverySingleton().householdType,
         additionalFields: HouseholdAdditionalFields(
           version: 1,
           fields: [

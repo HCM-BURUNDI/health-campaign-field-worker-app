@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/text_block.dart';
 import 'package:digit_components/widgets/digit_sync_dialog.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:registration_delivery/blocs/search_households/search_bloc_common_wrapper.dart';
+import 'package:registration_delivery/models/entities/household.dart';
 import 'package:registration_delivery/utils/extensions/extensions.dart';
 
 import 'package:registration_delivery/blocs/beneficiary_registration/beneficiary_registration.dart';
@@ -242,6 +244,8 @@ class CustomHouseholdLocationPageState
                               );
                               router.push(CustomHouseHoldDetailsRoute(
                                 refugeeCamp: selectedRefugeeCamp,
+                                registrationDate:
+                                    registrationDate.millisecondsSinceEpoch,
                               ));
                             },
                           );
@@ -454,7 +458,35 @@ class CustomHouseholdLocationPageState
     );
   }
 
+  (bool isRefugeeCamp, RefugeeCampOptions? selectedCampOption)
+      _getRefugeeCampDetails(HouseholdModel? household) {
+    final existingRefugeeCampValue = household?.additionalFields?.fields
+        ?.firstWhereOrNull((e) => e.key == Constants.refugeeCamp)
+        ?.value;
+    final isRefugeeCamp = household?.additionalFields?.fields
+            ?.firstWhereOrNull((e) => e.key == Constants.communityKey)
+            ?.value ==
+        Constants.refugee_camps;
+    RefugeeCampOptions? selectedCampOption;
+    final appState = context.read<AppInitializationBloc>().state;
+    if (appState is AppInitialized &&
+        existingRefugeeCampValue?.isNotEmpty == true) {
+      selectedCampOption = appState.appConfiguration.refugeeCampOptions
+          ?.firstWhereOrNull((camp) => camp.name == existingRefugeeCampValue);
+      if (selectedCampOption != null) {
+        selectedRefugeeCamp = selectedCampOption.name;
+        ifRefugeeCamp = true;
+      }
+    }
+    return (isRefugeeCamp, selectedCampOption);
+  }
+
   FormGroup buildForm(BeneficiaryRegistrationState state) {
+    final household = state.mapOrNull(editHousehold: (value) {
+      return value.householdModel;
+    }, create: (value) {
+      return value.householdModel;
+    });
     final addressModel = state.mapOrNull(
       create: (value) => value.addressModel,
       editHousehold: (value) => value.addressModel,
@@ -465,6 +497,8 @@ class CustomHouseholdLocationPageState
         return value.searchQuery;
       },
     );
+    final (isRefugeeCamp, selectedCampOption) =
+        _getRefugeeCampDetails(household);
 
     return fb.group(<String, Object>{
       _administrationAreaKey: FormControl<String>(
@@ -483,9 +517,11 @@ class CustomHouseholdLocationPageState
         value: addressModel?.locationAccuracy,
       ),
       _refugeeKey: FormControl<String>(
-        value: radioOptions.last,
+        value: isRefugeeCamp ? Constants.stringYes : Constants.stringNo,
       ),
-      __refugeeCampsTypeKey: FormControl<RefugeeCampOptions>(),
+      __refugeeCampsTypeKey: FormControl<RefugeeCampOptions>(
+        value: selectedCampOption,
+      ),
       if (RegistrationDeliverySingleton().householdType ==
           HouseholdType.community)
         _buildingNameKey: FormControl<String>(

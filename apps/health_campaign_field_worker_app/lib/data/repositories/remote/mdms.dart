@@ -333,6 +333,15 @@ class MdmsRepository {
       return symptomTypes;
     }).toList();
 
+    appConfiguration.searchHouseHoldFilters =
+        result.hcmWrapperModel?.searchHouseHoldFilters?.map((e) {
+      final searchFilters = SearchHouseHoldFilters()
+        ..name = e.name
+        ..code = e.code
+        ..active = e.active;
+      return searchFilters;
+    }).toList();
+
     appConfiguration.searchCLFFilters =
         result.hcmWrapperModel?.searchCLFFilters?.map((e) {
       final searchFilters = SearchCLFFilters()

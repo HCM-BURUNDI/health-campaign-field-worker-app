@@ -13,6 +13,7 @@ import 'package:gs1_barcode_parser/gs1_barcode_parser.dart';
 import 'package:digit_scanner/blocs/scanner.dart';
 import 'package:digit_scanner/widgets/vision_detector_views/painters/barcode_detector_painter.dart';
 import 'package:digit_scanner/utils/i18_key_constants.dart' as i18;
+import 'package:registration_delivery/utils/i18_key_constants.dart' as i18_reg;
 import 'package:health_campaign_field_worker_app/blocs/scanner/custom_digit_scanner_bloc.dart';
 import '../utils/i18_key_constants.dart' as i18Local;
 import 'package:digit_scanner/utils/constants.dart';
@@ -140,8 +141,8 @@ class CustomDigitScannerUtils {
 
             if (alreadyScanned) {
               // Handle error if the barcode is already scanned
-              await handleError(
-                  localizations.translate(i18.scanner.resourceAlreadyScanned));
+              await handleError(localizations.translate(
+                  i18_reg.deliverIntervention.resourceAlreadyScanned));
             } else if (quantity > result.length) {
               // Store the parsed result if the quantity is greater than result length
               await storeValue(parsedResult);

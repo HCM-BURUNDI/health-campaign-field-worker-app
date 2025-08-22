@@ -99,7 +99,7 @@ class CustomTaskLocalRepository extends TaskLocalRepository {
                   query.projectBeneficiaryClientReferenceId!,
                 ),
               if (userId != null)
-                sql.task.auditCreatedBy.equals(
+                sql.task.auditModifiedBy.equals(
                   userId,
                 ),
               if (query.projectId != null)
@@ -109,6 +109,10 @@ class CustomTaskLocalRepository extends TaskLocalRepository {
               if (query.createdBy != null)
                 sql.task.clientCreatedBy.equals(
                   query.createdBy!,
+                ),
+              if (userId != null)
+                sql.task.clientModifiedBy.equals(
+                  userId,
                 ),
               if (query.status != null)
                 sql.task.status.equals(

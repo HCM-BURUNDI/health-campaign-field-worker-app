@@ -426,6 +426,8 @@ class _HomePageState extends LocalizedState<HomePage> {
           customIconSize: 48, //add in constants foe closed households
           label: i18.home.closedHouseHoldLabel,
           onPressed: () async {
+            RegistrationDeliverySingleton()
+                .setHouseholdType(HouseholdType.family);
             await context.router.push(const ClosedHouseholdWrapperRoute());
           },
         ),
@@ -716,7 +718,11 @@ void setPackagesSingleton(BuildContext context) {
           selectedBeneficiaryType: context.beneficiaryType,
           projectType: context.selectedProjectType,
           selectedProject: context.selectedProject,
-          searchHouseHoldFilter: [],
+          searchHouseHoldFilter: appConfiguration.searchHouseHoldFilters != null
+              ? appConfiguration.searchHouseHoldFilters!
+                  .map((e) => e.code)
+                  .toList()
+              : [],
           refusalReasons: [],
           loggedInUser: context.loggedInUserModel,
           houseStructureTypes: [],

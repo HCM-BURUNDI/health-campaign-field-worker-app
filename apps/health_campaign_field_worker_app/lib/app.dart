@@ -22,6 +22,7 @@ import 'blocs/auth/auth.dart';
 import 'blocs/localization/localization.dart';
 import 'blocs/project/project.dart';
 import 'blocs/summary_reports/custom_distribution_summary_report.dart';
+import 'blocs/barcode_check/check_duplicate_barcode.dart';
 import 'blocs/summary_reports/custom_enumeration_summary_report.dart';
 import 'data/local_store/app_shared_preferences.dart';
 import 'data/local_store/no_sql/schema/app_configuration.dart';
@@ -331,6 +332,14 @@ class MainApplicationState extends State<MainApplication>
                                 ProjectFacilityModel,
                                 ProjectFacilitySearchModel>(),
                           ),
+                        ),
+                        BlocProvider(
+                          create: (context) {
+                            return CheckDuplicateQrCodeBloc(
+                                taskRepository: context
+                                    .repository<TaskModel, TaskSearchModel>());
+                          },
+                          lazy: false,
                         ),
                         BlocProvider(
                           create: (context) => StockReconciliationBloc(
