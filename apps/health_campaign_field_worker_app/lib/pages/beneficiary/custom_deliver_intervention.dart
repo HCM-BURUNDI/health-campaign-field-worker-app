@@ -439,21 +439,22 @@ class CustomDeliverInterventionPageState
                                                                     );
                                                                   }
                                                                   // info : show dialog stating less bednet scanned then the permissible count
-                                                                  else if (bednetScanned <
-                                                                      bednetCount) {
-                                                                    await DigitToast
-                                                                        .show(
-                                                                      context,
-                                                                      options:
-                                                                          DigitToastOptions(
-                                                                        localizations.translate(i18Local
-                                                                            .deliverIntervention
-                                                                            .bednetScanLessThanCount),
-                                                                        true,
-                                                                        theme,
-                                                                      ),
-                                                                    );
-                                                                  }
+                                                                  // made non mandatory as per new requirements
+                                                                  // else if (bednetScanned <
+                                                                  //     bednetCount) {
+                                                                  //   await DigitToast
+                                                                  //       .show(
+                                                                  //     context,
+                                                                  //     options:
+                                                                  //         DigitToastOptions(
+                                                                  //       localizations.translate(i18Local
+                                                                  //           .deliverIntervention
+                                                                  //           .bednetScanLessThanCount),
+                                                                  //       true,
+                                                                  //       theme,
+                                                                  //     ),
+                                                                  //   );
+                                                                  // }
                                                                   // info : show dialog stating more bednet scanned then the permissible count
                                                                   else if (bednetScanned >
                                                                       bednetCount) {
