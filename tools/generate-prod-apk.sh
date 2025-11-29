@@ -1,6 +1,6 @@
 cd apps/health_campaign_field_worker_app || exit
 
-fvm flutter pub run change_app_package_name:main org.egov.bi
+flutter pub run change_app_package_name:main org.egov.bi
 
 rm -rf release-apk
 mkdir release-apk
@@ -11,7 +11,7 @@ echo
 echo "Generating PROD APK"
 echo "------------------"
 
-fvm flutter build apk
+flutter build apk
 
 cp -fr build/app/outputs/flutter-apk/app-release.apk release-apk/apk-prod.apk
 echo

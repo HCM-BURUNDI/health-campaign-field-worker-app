@@ -1,4 +1,4 @@
-package org.egov.qa.bi
+package org.egov.bi
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
